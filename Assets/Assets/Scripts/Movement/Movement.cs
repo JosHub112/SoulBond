@@ -23,10 +23,12 @@ public class PlayerMovement : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
+    public bool canMoveInBattle = true; // Default to true for testing; your BattleManager will toggle this later
+
     private void Update()
     {
-        // Prevent overworld movement while in battle
-        if (EncounterManager.Instance != null && EncounterManager.Instance.inBattle)
+        // Block movement only if we are in battle AND battle movement is disabled
+        if (EncounterManager.Instance != null && EncounterManager.Instance.inBattle && !canMoveInBattle)
         {
             return;
         }
@@ -46,13 +48,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 transform.position += moveDelta;
 
-                // Accumulate distance moved and trigger encounter step
-                distanceTraveled += moveDelta.magnitude;
-                if (distanceTraveled >= stepDistanceThreshold)
+                // Only count distance towards random encounters if NOT in a battle
+                if (EncounterManager.Instance != null && !EncounterManager.Instance.inBattle)
                 {
-                    distanceTraveled = 0f;
-                    if (EncounterManager.Instance != null)
+                    distanceTraveled += moveDelta.magnitude;
+                    if (distanceTraveled >= stepDistanceThreshold)
                     {
+                        distanceTraveled = 0f;
                         EncounterManager.Instance.CheckForEncounters(transform);
                     }
                 }

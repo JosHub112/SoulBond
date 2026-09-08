@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
+
 /// Enemy template. Create one asset per enemy type via
 /// Assets > Create > Battle System > Enemy.
-/// </summary>
+
 [CreateAssetMenu(fileName = "New Enemy", menuName = "Battle System/Enemy")]
 public class EnemySO : ScriptableObject
 {

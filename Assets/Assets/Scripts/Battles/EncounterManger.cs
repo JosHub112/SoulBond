@@ -1,11 +1,12 @@
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-/// <summary>
+
 /// Rolls a random encounter chance whenever the player steps onto a tile
 /// that exists on the assigned "ground" Tilemap.
-/// </summary>
+
 public class EncounterManager : MonoBehaviour
 {
     public static EncounterManager Instance {  get; private set; }
@@ -16,8 +17,11 @@ public class EncounterManager : MonoBehaviour
     public Vector3 savedOverworldPosition;
     public bool inBattle = false;
 
+    [SerializeField] private List<EnemySO> possibleEnemies = new List<EnemySO>();
+
     private void Awake()
     {
+
         if (Instance == null) Instance = this;
         else Destroy(gameObject);       
     }
@@ -39,7 +43,13 @@ public class EncounterManager : MonoBehaviour
 
         playerTransform.position = battlePlayerSpawnPoint.position;
 
-        Debug.Log("Encounter triggerd");
+        if (BattleManager.Instance != null && possibleEnemies.Count > 0)
+        {
+            // Pick a random index safely from the entire list size
+            int randomIndex = UnityEngine.Random.Range(0, possibleEnemies.Count);
+            List<EnemySO> encounterList = new List<EnemySO>() { possibleEnemies[randomIndex] };
+            BattleManager.Instance.StartBattle(encounterList);
+        }
     }
 
     public void EndBattle(Transform playerTransform)

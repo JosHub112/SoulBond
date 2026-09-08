@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8626dd67da6c83a409e2c87069743d7c, type: 3}
   m_Name: ArtuurPinch
   m_EditorClassIdentifier: Assembly-CSharp::AttackSO
-  attackName: 
-  damage: 0
-  accuracy: 100
-  animationTriggerName: 
+  attackName: Artuur Pinch
+  damage: 1
+  patternType: 0
+  hazardPrefab: {fileID: 0}
+  attackDuration: 5
+  fireRate: 0.5
+  projectileSpeed: 5
+  bulletCountPerBurst: 8
+  attackAnimation: {fileID: 0}
+  hitEffectPrefab: {fileID: 0}

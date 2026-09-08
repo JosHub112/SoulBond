@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySO
   enemyName: Artuur
   maxHP: 120
-  enemySprite: {fileID: -5425482378912520828, guid: 1d2d3b33f86e8b7489b75f8a2d5be86f, type: 3}
+  enemySprite: {fileID: 5373921122457490404, guid: 1d2d3b33f86e8b7489b75f8a2d5be86f, type: 3}
+  idleAnimation: {fileID: 0}
   attacks:
   - {fileID: 11400000, guid: 4f44740d01faba6488b49ffb07072033, type: 2}
   - {fileID: 11400000, guid: 342d193b946833147a708de0b9e97da5, type: 2}

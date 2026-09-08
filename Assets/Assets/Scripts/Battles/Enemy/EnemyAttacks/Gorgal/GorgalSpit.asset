@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: GorgalSpit
   m_EditorClassIdentifier: Assembly-CSharp::AttackSO
   attackName: Gorgal Spit
-  damage: 10
-  accuracy: 50
-  animationTriggerName: 
+  damage: 1
+  patternType: 2
+  hazardPrefab: {fileID: 3153729401918488478, guid: c2e03329fbacc5f43b73460689bf9fe2, type: 3}
+  attackDuration: 5
+  fireRate: 1
+  projectileSpeed: 1
+  bulletCountPerBurst: 1
+  attackAnimation: {fileID: 0}
+  hitEffectPrefab: {fileID: 0}
