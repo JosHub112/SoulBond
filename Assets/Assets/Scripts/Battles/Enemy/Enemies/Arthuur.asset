@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8505da99f5a06f74f98bd41d4b99959a, type: 3}
+  m_Name: Arthuur
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySO
+  enemyName: Artuur
+  maxHP: 120
+  enemySprite: {fileID: -5425482378912520828, guid: 1d2d3b33f86e8b7489b75f8a2d5be86f, type: 3}
+  attacks:
+  - {fileID: 11400000, guid: 4f44740d01faba6488b49ffb07072033, type: 2}
+  - {fileID: 11400000, guid: 342d193b946833147a708de0b9e97da5, type: 2}
