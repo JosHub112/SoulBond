@@ -9,16 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8626dd67da6c83a409e2c87069743d7c, type: 3}
-  m_Name: GorgalBlast
-  m_EditorClassIdentifier: Assembly-CSharp::AttackSO
-  attackName: Gorgal Blast
-  damage: 1
-  patternType: 0
+  m_Script: {fileID: 11500000, guid: 2d9e53ba116c3fa4c814d33570da2a8e, type: 3}
+  m_Name: GorgalStream
+  m_EditorClassIdentifier: Assembly-CSharp::BulletStreamPatternSO
   hazardPrefab: {fileID: 6382857516649676201, guid: 5c95a0b895501e543a1f2cd175c50500, type: 3}
-  attackDuration: 5
-  fireRate: 1
-  projectileSpeed: 1
-  bulletCountPerBurst: 1
-  attackAnimation: {fileID: 0}
-  hitEffectPrefab: {fileID: 0}
+  damage: 1
+  projectileSpeed: 10
+  bulletCount: 1
+  spawnWidth: 4
+  spawnHeightOffset: 5

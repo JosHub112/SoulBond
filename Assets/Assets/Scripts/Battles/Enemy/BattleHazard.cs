@@ -2,57 +2,41 @@ using UnityEngine;
 
 public class BattleHazard : MonoBehaviour
 {
-    private int damage;
-    private Vector3 moveDirection; 
+    private int damage = 1;
+    private Vector2 moveDirection;
     private float moveSpeed;
-    private AttackPatternType attackType;
-    private Transform myTransform; 
+    private bool isInitialized = false;
 
-    public void Setup(int damage, Vector2 direction, float speed, AttackPatternType type)
+    // Standard Setup without any AttackPatternType enum parameter
+    public void Setup(int damageAmount, Vector2 direction, float speed)
     {
-        this.damage = damage;
-        this.moveDirection = direction;
-        this.moveSpeed = speed;
-        this.attackType = type;
-        this.myTransform = transform; 
+        damage = damageAmount;
+        moveDirection = direction;
+        moveSpeed = speed;
+        isInitialized = true;
 
-        // Autodestroy to prevent memory leaks
-        Destroy(gameObject, 5f);
+        // Auto-destroy after 6 seconds to prevent memory leaks
+        Destroy(gameObject, 6f);
     }
 
     private void Update()
     {
-       
-        switch (attackType)
-        {
-            case AttackPatternType.BulletStream:
-            case AttackPatternType.RadialBurst:
-                // Both are projectiles that need to move
-                myTransform.Translate(moveDirection * (moveSpeed * Time.deltaTime), Space.World);
-                break;
+        if (!isInitialized) return;
 
-            case AttackPatternType.AoECircle:
-                // Grow scale continuously over time
-                myTransform.localScale += Vector3.one * (moveSpeed * Time.deltaTime);
-                break;
-        }
+        // Translate hazard according to set direction and speed
+        transform.Translate(moveDirection * moveSpeed * Time.deltaTime, Space.World);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-          
-            if (other.TryGetComponent<PlayerHealth>(out var health))
+            if (collision.TryGetComponent<PlayerHealth>(out var playerHealth))
             {
-                health.TakeDamage(damage);
+                playerHealth.TakeDamage(damage);
             }
 
-           
-            if (attackType == AttackPatternType.BulletStream || attackType == AttackPatternType.RadialBurst)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
     }
 }

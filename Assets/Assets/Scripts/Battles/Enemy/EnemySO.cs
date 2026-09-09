@@ -1,20 +1,13 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-
-/// Enemy template. Create one asset per enemy type via
-/// Assets > Create > Battle System > Enemy.
-
-[CreateAssetMenu(fileName = "New Enemy", menuName = "Battle System/Enemy")]
+[CreateAssetMenu(fileName = "NewEnemy", menuName = "Battle/Enemy Data")]
 public class EnemySO : ScriptableObject
 {
     public string enemyName;
-    public int maxHP;
     public Sprite enemySprite;
+    public int maxHealth = 20;
 
-    [Header("Animations & Actions")]
-    public AnimationClip idleAnimation;
-
-    //all the attacks that the enemy does 
+    
     public List<AttackSO> attacks = new List<AttackSO>();
 }

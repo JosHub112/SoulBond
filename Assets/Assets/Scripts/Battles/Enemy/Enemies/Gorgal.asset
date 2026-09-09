@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Gorgal
   m_EditorClassIdentifier: Assembly-CSharp::EnemySO
   enemyName: Gorgal
-  maxHP: 100
   enemySprite: {fileID: 1830482179610588863, guid: 480628541b863f241a47dd7483fbd178, type: 3}
-  idleAnimation: {fileID: 0}
+  maxHealth: 20
   attacks:
-  - {fileID: 11400000, guid: 2f6ba27dd64555c43af960a2246eebfa, type: 2}
-  - {fileID: 11400000, guid: 182af256f0ed5bd40a5ab0cf88c179d1, type: 2}
+  - {fileID: 11400000, guid: ba279138bf79cdf499e177b56855f87f, type: 2}
+  - {fileID: 11400000, guid: 94f39f4161b5df84cae15963e50dd8a8, type: 2}
