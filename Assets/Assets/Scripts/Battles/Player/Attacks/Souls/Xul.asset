@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 607af1258ed2aa34c8bc048e2fae8256, type: 3}
+  m_Name: Xul
+  m_EditorClassIdentifier: Assembly-CSharp::SoulSO
+  SoulIdle: {fileID: 7400000, guid: dab1fe8fbeab8a2469b0267c5aab0346, type: 2}
+  SoulSprite: {fileID: 4567739482183230922, guid: 545f8dbe2e0becb4bbf79672653dbec3, type: 3}
+  attacks:
+  - {fileID: 11400000, guid: db7747db05fd7cc40ae368c5a0729223, type: 2}
