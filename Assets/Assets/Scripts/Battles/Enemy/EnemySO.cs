@@ -5,9 +5,11 @@ using UnityEngine;
 public class EnemySO : ScriptableObject
 {
     public string enemyName;
-    public Sprite enemySprite;
-    public int maxHealth = 20;
 
-    
+    // CHANGE THIS: From Sprite to GameObject
+    [Tooltip("The Prefab GameObject for this enemy (must contain a SpriteRenderer and EnemyController)")]
+    public GameObject enemyPrefab;
+
+    public int maxHealth = 20;
     public List<AttackSO> attacks = new List<AttackSO>();
 }

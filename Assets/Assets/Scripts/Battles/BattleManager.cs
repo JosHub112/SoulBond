@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public enum BattleState
 {
@@ -14,7 +15,7 @@ public enum BattleState
     FLED,
 }
 
-[RequireComponent(typeof(HazardSpawner))] //adds spawner script automatically
+[RequireComponent(typeof(HazardSpawner))]
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance { get; private set; }
@@ -33,19 +34,26 @@ public class BattleManager : MonoBehaviour
 
     [Header("Enemy Data")]
     [SerializeField] private List<EnemySO> currentEnemies = new List<EnemySO>();
-    [SerializeField] private GameObject enemyPrefab;
     private List<GameObject> spawnedEnemyObjects = new List<GameObject>();
 
     [Header("Player Attack")]
-   
     [SerializeField] private PlayerAttackSO currentAttack;
-
     [SerializeField] private Transform playerVfxAnchor;
 
     [Header("Enemy Chooser UI")]
-
     [SerializeField] private Button[] enemyChooserButtons = new Button[4];
-    [SerializeField] private GameObject enemyChooserRoot; // optional parent object for the whole chooser group
+    [SerializeField] private GameObject enemyChooserRoot;
+
+    [Header("Soul")]
+    [SerializeField] private SoulSO currentSoul;
+    [SerializeField] private Transform soulSpawnAnchor;
+    private GameObject spawnedSoulObject;
+
+    [Header("Soul Options UI")]
+    [SerializeField] private GameObject soulOptionsRoot;
+    [SerializeField] private Button[] soulAttackButtons = new Button[4];
+
+    private AttackDataSO pendingAttack;
 
     private List<int> selectedTargetIndices = new List<int>();
     private bool choosingTargets = false;
@@ -55,15 +63,22 @@ public class BattleManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        // Fetch the spawner component
         hazardSpawner = GetComponent<HazardSpawner>();
 
-        // Wire up enemy chooser buttons once, capturing each index correctly.
         for (int i = 0; i < enemyChooserButtons.Length; i++)
         {
             if (enemyChooserButtons[i] == null) continue;
-            int capturedIndex = i; // avoid closure bug - don't use loop var directly
+
+            int capturedIndex = i;
             enemyChooserButtons[i].onClick.AddListener(() => OnEnemyTargetSelected(capturedIndex));
+        }
+
+        for (int i = 0; i < soulAttackButtons.Length; i++)
+        {
+            if (soulAttackButtons[i] == null) continue;
+
+            int capturedIndex = i;
+            soulAttackButtons[i].onClick.AddListener(() => OnSoulAttackChosen(capturedIndex));
         }
     }
 
@@ -71,6 +86,7 @@ public class BattleManager : MonoBehaviour
     {
         if (battleUIPanel != null) battleUIPanel.SetActive(false);
         HideEnemyChooser();
+        HideSoulOptions();
     }
 
     public void StartBattle(List<EnemySO> enemies)
@@ -86,15 +102,12 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < currentEnemies.Count && i < enemySpawnPosition.Length; i++)
         {
-            if (currentEnemies[i] == null || enemySpawnPosition[i] == null) continue;
+            if (currentEnemies[i] == null || currentEnemies[i].enemyPrefab == null || enemySpawnPosition[i] == null) continue;
 
-            GameObject newEnemy = Instantiate(enemyPrefab, enemySpawnPosition[i].position, Quaternion.identity, enemySpawnPosition[i]);
+            GameObject newEnemy = Instantiate(currentEnemies[i].enemyPrefab, enemySpawnPosition[i].position, Quaternion.identity, enemySpawnPosition[i]);
 
-            SpriteRenderer sr = newEnemy.GetComponent<SpriteRenderer>();
-            if (sr != null) sr.sprite = currentEnemies[i].enemySprite;
-
-            EnemyController ec = newEnemy.GetComponent<EnemyController>();
-            if (ec != null) ec.Initialize(currentEnemies[i]); // pulls maxHealth (and enemyName, etc) from the EnemySO
+            EnemyController ec = newEnemy.GetComponentInChildren<EnemyController>();
+            if (ec != null) ec.Initialize(currentEnemies[i]);
 
             spawnedEnemyObjects.Add(newEnemy);
         }
@@ -116,7 +129,11 @@ public class BattleManager : MonoBehaviour
         state = BattleState.PLAYERTURN;
         choosingTargets = false;
         selectedTargetIndices.Clear();
+        pendingAttack = null;
+
         HideEnemyChooser();
+        HideSoulOptions();
+        DespawnSoul();
 
         if (playerMovement != null)
         {
@@ -125,22 +142,15 @@ public class BattleManager : MonoBehaviour
         }
 
         if (battleUIPanel != null) battleUIPanel.SetActive(true);
-
-        Debug.Log("Player Turn: Select an action (Attack, Block, Flee).");
     }
 
     public void OnAttackButtonClicked()
     {
         if (state != BattleState.PLAYERTURN) return;
+        if (currentAttack == null) return;
 
-        if (currentAttack == null)
-        {
-            Debug.LogWarning("No PlayerAttackSO assigned to BattleManager (currentAttack).");
-            return;
-        }
-
-        Debug.Log("Player Clicks Attack");
-        BeginTargetSelection(currentAttack);
+        pendingAttack = currentAttack;
+        BeginTargetSelection();
     }
 
     public void OnBlockButtonClicked()
@@ -155,27 +165,101 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(ExecuteFleeAttempt());
     }
 
-    // ---------- Target selection ----------
+    public void OnSoulButtonClicked()
+    {
+        if (state != BattleState.PLAYERTURN) return;
+        if (currentSoul == null || currentSoul.attacks == null || currentSoul.attacks.Count == 0) return;
 
-    private void BeginTargetSelection(PlayerAttackSO attack)
+        SummonSoul();
+
+        if (battleUIPanel != null) battleUIPanel.SetActive(false);
+        ShowSoulOptions();
+    }
+
+    private void SummonSoul()
+    {
+        if (spawnedSoulObject != null) return;
+        if (currentSoul.SoulSprite == null || soulSpawnAnchor == null) return;
+
+        spawnedSoulObject = Instantiate(currentSoul.SoulSprite, soulSpawnAnchor.position, Quaternion.identity, soulSpawnAnchor);
+
+        SpriteRenderer sr = spawnedSoulObject.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+        {
+            Color initialColor = sr.color;
+            initialColor.a = 0f;
+            sr.color = initialColor;
+
+            sr.DOFade(1f, 0.5f);
+
+            spawnedSoulObject.transform.position += Vector3.down * 0.5f;
+            spawnedSoulObject.transform.DOMoveY(soulSpawnAnchor.position.y, 0.5f).SetEase(Ease.OutBack);
+        }
+    }
+
+    private void DespawnSoul()
+    {
+        if (spawnedSoulObject != null)
+        {
+            Destroy(spawnedSoulObject);
+            spawnedSoulObject = null;
+        }
+    }
+
+    private void ShowSoulOptions()
+    {
+        if (soulOptionsRoot != null) soulOptionsRoot.SetActive(true);
+
+        for (int i = 0; i < soulAttackButtons.Length; i++)
+        {
+            if (soulAttackButtons[i] == null) continue;
+
+            bool attackAvailable = currentSoul != null && i < currentSoul.attacks.Count && currentSoul.attacks[i] != null;
+            soulAttackButtons[i].gameObject.SetActive(attackAvailable);
+            soulAttackButtons[i].interactable = attackAvailable;
+        }
+    }
+
+    private void HideSoulOptions()
+    {
+        if (soulOptionsRoot != null) soulOptionsRoot.SetActive(false);
+
+        for (int i = 0; i < soulAttackButtons.Length; i++)
+        {
+            if (soulAttackButtons[i] == null) continue;
+            soulAttackButtons[i].gameObject.SetActive(false);
+        }
+    }
+
+    private void OnSoulAttackChosen(int index)
+    {
+        if (state != BattleState.PLAYERTURN) return;
+        if (currentSoul == null || index >= currentSoul.attacks.Count || currentSoul.attacks[index] == null) return;
+
+        SoulAttackSO chosen = currentSoul.attacks[index];
+
+        HideSoulOptions();
+
+        pendingAttack = chosen;
+        BeginTargetSelection();
+    }
+
+    private void BeginTargetSelection()
     {
         choosingTargets = true;
         selectedTargetIndices.Clear();
 
-        // Hide the main action panel (Flee/Attack/Block/Soul) while picking targets
         if (battleUIPanel != null) battleUIPanel.SetActive(false);
-        Debug.Log("Beginning TargetSelection...");
         ShowEnemyChooser();
     }
 
     private void ShowEnemyChooser()
     {
         if (enemyChooserRoot != null) enemyChooserRoot.SetActive(true);
-        Debug.Log("Target Selection Begun");
+
         for (int i = 0; i < enemyChooserButtons.Length; i++)
         {
             if (enemyChooserButtons[i] == null) continue;
-            Debug.Log("Choose your target");
 
             bool enemyAlive = i < spawnedEnemyObjects.Count && spawnedEnemyObjects[i] != null;
             enemyChooserButtons[i].gameObject.SetActive(enemyAlive);
@@ -186,7 +270,6 @@ public class BattleManager : MonoBehaviour
     private void HideEnemyChooser()
     {
         if (enemyChooserRoot != null) enemyChooserRoot.SetActive(false);
-        Debug.Log("EnemyChooser Hidden");
 
         for (int i = 0; i < enemyChooserButtons.Length; i++)
         {
@@ -198,130 +281,125 @@ public class BattleManager : MonoBehaviour
     private void OnEnemyTargetSelected(int index)
     {
         if (!choosingTargets) return;
+        if (pendingAttack == null) return;
         if (index >= spawnedEnemyObjects.Count || spawnedEnemyObjects[index] == null) return;
-        if (selectedTargetIndices.Contains(index)) return; 
+        if (selectedTargetIndices.Contains(index)) return;
 
         selectedTargetIndices.Add(index);
 
-
-        int needed = Mathf.Max(1, currentAttack.Enemycount);
+        int needed = Mathf.Max(1, pendingAttack.Enemycount);
 
         if (selectedTargetIndices.Count >= needed)
         {
             choosingTargets = false;
             HideEnemyChooser();
-            StartCoroutine(ExecutePlayerAttack(currentAttack, new List<int>(selectedTargetIndices)));
+            StartCoroutine(ExecuteAttack(pendingAttack, new List<int>(selectedTargetIndices)));
         }
     }
 
-    // ---------- Attack execution ----------
-
-private IEnumerator ExecutePlayerAttack(PlayerAttackSO attack, List<int> targetIndices)
+    private IEnumerator ExecuteAttack(AttackDataSO attack, List<int> targetIndices)
     {
         state = BattleState.BUSY;
 
-        // --- Charge phase ---
-        Vector3 chargeOrigin = playerVfxAnchor != null
-            ? playerVfxAnchor.position
-            : playerMovement.transform.position;
+        bool isSoulAttacking = (attack is SoulAttackSO && spawnedSoulObject != null);
+        Transform attacker = isSoulAttacking ? spawnedSoulObject.transform : playerMovement.transform;
+        Vector3 startPos = attacker.position;
 
-        if (attack.ChargeVFX != null)
+        GameObject mainTarget = null;
+        foreach (int idx in targetIndices)
         {
-            Instantiate(attack.ChargeVFX, chargeOrigin, Quaternion.identity);
+            if (idx < spawnedEnemyObjects.Count && spawnedEnemyObjects[idx] != null)
+            {
+                mainTarget = spawnedEnemyObjects[idx];
+                break;
+            }
         }
 
-        float chargeDuration = 0.5f;
-
-        if (attack.ChargeAnim != null)
+        if (mainTarget != null)
         {
-            chargeDuration = attack.ChargeAnim.length;
-            PlayClip(attack.ChargeAnim);
-        }
+            if (attack.ChargeVFX != null)
+            {
+                Instantiate(attack.ChargeVFX, attacker.position, Quaternion.identity);
+            }
 
-        yield return new WaitForSeconds(chargeDuration);
+            yield return new WaitForSeconds(0.3f);
 
+            Vector3 attackPos = mainTarget.transform.position + Vector3.left * 1.5f;
+            yield return attacker.DOMove(attackPos, 0.15f).SetEase(Ease.InExpo).WaitForCompletion();
 
-        // --- Attack phase ---
-        // Spawns the attack VFX on every enemy that was selected
-        if (attack.AttackVFX != null)
-        {
             foreach (int idx in targetIndices)
             {
-                if (idx >= spawnedEnemyObjects.Count)
-                    continue;
+                if (idx >= spawnedEnemyObjects.Count || spawnedEnemyObjects[idx] == null) continue;
 
                 GameObject enemyObj = spawnedEnemyObjects[idx];
 
-                if (enemyObj == null)
-                    continue;
+                if (attack.AttackVFX != null)
+                {
+                    Instantiate(attack.AttackVFX, enemyObj.transform.position, Quaternion.identity);
+                }
 
-                Instantiate(
-                    attack.AttackVFX,
-                    enemyObj.transform.position,
-                    Quaternion.identity
-                );
+                EnemyController ec = enemyObj.GetComponentInChildren<EnemyController>();
+                if (ec != null) ec.TakeDamage(attack.damage);
+
+                enemyObj.transform.DOShakePosition(duration: 0.3f, strength: 0.5f, vibrato: 20);
+
+                SpriteRenderer enemySprite = enemyObj.GetComponentInChildren<SpriteRenderer>();
+                if (enemySprite != null)
+                {
+                    enemySprite.DOColor(Color.red, 0.1f).SetLoops(2, LoopType.Yoyo);
+                }
             }
+
+            yield return new WaitForSeconds(0.2f);
+
+            yield return attacker.DOJump(startPos, jumpPower: 1f, numJumps: 1, duration: 0.4f).WaitForCompletion();
         }
 
-        float attackDuration = 0.5f;
-
-        if (attack.AttackAnim != null)
+        if (isSoulAttacking)
         {
-            attackDuration = attack.AttackAnim.length;
-            PlayClip(attack.AttackAnim);
+            SpriteRenderer sr = spawnedSoulObject.GetComponentInChildren<SpriteRenderer>();
+            if (sr != null)
+            {
+                yield return sr.DOFade(0f, 0.2f).WaitForCompletion();
+            }
+
+            DespawnSoul();
         }
 
-        yield return new WaitForSeconds(attackDuration);
-
-
-        // --- Apply damage to chosen targets ---
-        foreach (int idx in targetIndices)
-        {
-            if (idx >= spawnedEnemyObjects.Count || spawnedEnemyObjects[idx] == null)
-                continue;
-
-            EnemyController ec = spawnedEnemyObjects[idx].GetComponent<EnemyController>();
-
-            if (ec != null)
-            {
-                ec.TakeDamage(attack.damage);
-            }
-            else
-            {
-                Debug.LogWarning(
-                    $"Enemy at index {idx} has no EnemyController - damage not applied."
-                );
-            }
-        }
-
+        pendingAttack = null;
         yield return new WaitForSeconds(0.3f);
 
-        if (CheckVictoryCondition())
-            StartCoroutine(EndBattleSequence(true));
-        else
-            StartCoroutine(StartEnemyTurn());
+        if (CheckVictoryCondition()) StartCoroutine(EndBattleSequence(true));
+        else StartCoroutine(StartEnemyTurn());
     }
 
-
-
-    /// Plays an AnimationClip on the player using the legacy Animation component.
-
-    private void PlayClip(AnimationClip clip)
+    private IEnumerator ExecutePlayerBlock()
     {
-        if (playerMovement == null || clip == null) return;
+        state = BattleState.BUSY;
+        battleUIPanel.SetActive(false);
 
-        Animation anim = playerMovement.GetComponent<Animation>();
-        if (anim == null)
-        {
-            Debug.LogWarning("No legacy Animation component found on player - skipping clip playback.");
-            return;
-        }
+        playerMovement.transform.DOPunchScale(new Vector3(0.2f, -0.2f, 0f), duration: 0.5f, vibrato: 5);
 
-        if (anim.GetClip(clip.name) == null)
+        yield return new WaitForSeconds(0.6f);
+        StartCoroutine(StartEnemyTurn());
+    }
+
+    private IEnumerator ExecuteFleeAttempt()
+    {
+        state = BattleState.BUSY;
+        battleUIPanel.SetActive(false);
+
+        bool success = Random.value > 0.8f;
+
+        if (success)
         {
-            anim.AddClip(clip, clip.name);
+            StartCoroutine(EndBattleSequence(false));
         }
-        anim.Play(clip.name);
+        else
+        {
+            yield return playerMovement.transform.DOPunchPosition(Vector3.left * 2f, 0.6f, vibrato: 3).WaitForCompletion();
+            StartCoroutine(StartEnemyTurn());
+        }
     }
 
     private IEnumerator StartEnemyTurn()
@@ -335,8 +413,6 @@ private IEnumerator ExecutePlayerAttack(PlayerAttackSO attack, List<int> targetI
         {
             EnemySO enemy = currentEnemies[0];
             AttackSO selectedAttack = enemy.attacks[Random.Range(0, enemy.attacks.Count)];
-
-            Debug.Log($"Enemy uses: {selectedAttack.name}");
 
             float timer = 0f;
             float nextSpawnTime = 0f;
@@ -368,42 +444,8 @@ private IEnumerator ExecutePlayerAttack(PlayerAttackSO attack, List<int> targetI
         StartPlayerTurn();
     }
 
-    private IEnumerator ExecutePlayerBlock()
-    {
-        state = BattleState.BUSY;
-        battleUIPanel.SetActive(false);
-
-        Debug.Log("Player prepares to Block/Reflect!");
-        yield return new WaitForSeconds(0.5f);
-
-        StartCoroutine(StartEnemyTurn());
-    }
-
-    private IEnumerator ExecuteFleeAttempt()
-    {
-        state = BattleState.BUSY;
-        battleUIPanel.SetActive(false);
-
-        Debug.Log("Attempting to flee...");
-        yield return new WaitForSeconds(1f);
-
-        bool success = Random.value > 0.3f;
-
-        if (success)
-        {
-            Debug.Log("Fled successfully!");
-            StartCoroutine(EndBattleSequence(false));
-        }
-        else
-        {
-            Debug.Log("Failed to flee!");
-            StartCoroutine(StartEnemyTurn());
-        }
-    }
-
     private bool CheckVictoryCondition()
     {
-        // True once every spawned enemy has been destroyed/removed.
         for (int i = 0; i < spawnedEnemyObjects.Count; i++)
         {
             if (spawnedEnemyObjects[i] != null) return false;
@@ -413,17 +455,18 @@ private IEnumerator ExecutePlayerAttack(PlayerAttackSO attack, List<int> targetI
 
     private IEnumerator EndBattleSequence(bool won)
     {
-        // Hide UI immediately when battle finishes
         if (battleUIPanel != null)
         {
             battleUIPanel.SetActive(false);
         }
+
         HideEnemyChooser();
+        HideSoulOptions();
+        DespawnSoul();
 
         if (won)
         {
             state = BattleState.WON;
-            Debug.Log("Victory!");
         }
         else
         {
@@ -432,7 +475,6 @@ private IEnumerator ExecutePlayerAttack(PlayerAttackSO attack, List<int> targetI
 
         yield return new WaitForSeconds(1f);
 
-        // Clean up enemy GameObjects before returning to overworld
         ClearEnemies();
 
         if (EncounterManager.Instance != null && playerMovement != null)
@@ -459,11 +501,9 @@ private IEnumerator ExecutePlayerAttack(PlayerAttackSO attack, List<int> targetI
         spawnedEnemyObjects.Clear();
     }
 
-    /// Called by an EnemyController when it dies, so the manager's list stays in sync
-    /// even if the enemy destroys itself instead of BattleManager doing it directly.
     public void NotifyEnemyDefeated(GameObject enemyObj)
     {
         int idx = spawnedEnemyObjects.IndexOf(enemyObj);
-        if (idx >= 0) spawnedEnemyObjects[idx] = null; // keep index alignment with enemySpawnPosition
+        if (idx >= 0) spawnedEnemyObjects[idx] = null;
     }
 }

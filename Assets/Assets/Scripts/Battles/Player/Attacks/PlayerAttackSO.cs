@@ -1,18 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PlayerAttackSO", menuName = "Scriptable Objects/PlayerAttackSO")]
-public class PlayerAttackSO : ScriptableObject
+public class PlayerAttackSO : AttackDataSO
 {
-    [Header("Properties")]
-    public int damage = 1;
-    public int Enemycount;
-
-    [Header("Animations")]
-    public AnimationClip ChargeAnim;
-    public AnimationClip AttackAnim;
-
-    [Header("VFX")]
-    public GameObject AttackVFX;
-    public GameObject ChargeVFX;
-    
+// All fields are in the AttackDataSO 
 }
