@@ -132,6 +132,7 @@ public class BattleManager : MonoBehaviour
         pendingAttack = null;
 
         HideEnemyChooser();
+        ClearActiveHazards();
         HideSoulOptions();
         DespawnSoul();
 
@@ -488,6 +489,7 @@ public class BattleManager : MonoBehaviour
         BattleHazard[] hazards = FindObjectsOfType<BattleHazard>();
         foreach (BattleHazard h in hazards)
         {
+
             Destroy(h.gameObject);
         }
     }

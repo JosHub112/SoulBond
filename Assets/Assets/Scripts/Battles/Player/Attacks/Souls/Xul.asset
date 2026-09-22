@@ -16,3 +16,4 @@ MonoBehaviour:
   SoulSprite: {fileID: 4706711191457661733, guid: 6ddacc8a8601bb6479359340cba913c4, type: 3}
   attacks:
   - {fileID: 11400000, guid: db7747db05fd7cc40ae368c5a0729223, type: 2}
+  - {fileID: 11400000, guid: 218d5bfd329bdda4098154b0f640d0c7, type: 2}
