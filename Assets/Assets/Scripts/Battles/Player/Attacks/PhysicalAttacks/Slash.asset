@@ -16,5 +16,5 @@ MonoBehaviour:
   Enemycount: 0
   ChargeAnim: {fileID: 7400000, guid: 7f2e356d82e3bb944bcae2be8334ad6e, type: 2}
   AttackAnim: {fileID: 7400000, guid: f471044b683c601478a0b7abf783acff, type: 2}
-  AttackVFX: {fileID: 5083840414635256342, guid: f3d818cf7f9c75f4498600751f63d64e, type: 3}
+  AttackVFX: {fileID: 6371210339565269589, guid: 9d80d51230f430947901726206752c91, type: 3}
   ChargeVFX: {fileID: 7992260585244654165, guid: 9b7e792d47601df4283d90654b322f0f, type: 3}
