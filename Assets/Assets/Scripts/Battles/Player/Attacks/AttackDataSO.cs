@@ -13,4 +13,7 @@ public abstract class AttackDataSO : ScriptableObject
     [Header("VFX")]
     public GameObject AttackVFX;
     public GameObject ChargeVFX;
+
+    [Header("Audio")]
+    public AudioClip attackSFX;
 }

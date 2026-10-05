@@ -29,6 +29,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isInvincible || currentHealth <= 0) return;
 
+        AudioManager.Instance?.PlayHitSFX();
         Debug.Log($"Hit! Shake reference is null? {Shake == null}");
 
         if (Shake != null)

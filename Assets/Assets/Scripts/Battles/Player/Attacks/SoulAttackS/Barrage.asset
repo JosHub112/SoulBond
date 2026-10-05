@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7400e7426b80d9344b5968a8afa8f8bd, type: 3}
   m_Name: Barrage
   m_EditorClassIdentifier: Assembly-CSharp::SoulAttackSO
-  damage: 3
+  damage: 13
   Enemycount: 0
   ChargeAnim: {fileID: 7400000, guid: e113751b57b43694992a87aeffaee50d, type: 2}
   AttackAnim: {fileID: 7400000, guid: f471044b683c601478a0b7abf783acff, type: 2}
   AttackVFX: {fileID: 4296831662144837635, guid: 3f48780adbb053c4fa23d031ad94ead1, type: 3}
   ChargeVFX: {fileID: 1824621474575468213, guid: 4479417fab7aac64988f6117e2d249df, type: 3}
+  attackSFX: {fileID: 8300000, guid: 6641beb26a4f9614783edc164438911d, type: 3}
   SoulChargeAnim: {fileID: 7400000, guid: 39d99f4c2d45db4438c31ae1c9e1dbf2, type: 2}
   SoulAttackAnim: {fileID: 7400000, guid: bbd869189a564b7458df9a814bec7e75, type: 2}

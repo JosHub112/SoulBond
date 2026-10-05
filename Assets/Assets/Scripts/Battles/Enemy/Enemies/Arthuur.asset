@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySO
   enemyName: Artuur
   enemyPrefab: {fileID: 8014440047835282662, guid: b3c490767295fb746a627ef9edc2546e, type: 3}
-  maxHealth: 20
+  maxHealth: 50
   attacks:
   - {fileID: 11400000, guid: 94f39f4161b5df84cae15963e50dd8a8, type: 2}
   - {fileID: 11400000, guid: ba279138bf79cdf499e177b56855f87f, type: 2}

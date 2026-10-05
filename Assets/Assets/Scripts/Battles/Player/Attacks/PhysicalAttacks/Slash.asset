@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f3a8a292e2d95a4b8a5a16a86ce661f, type: 3}
   m_Name: Slash
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttackSO
-  damage: 2
+  damage: 1000
   Enemycount: 0
   ChargeAnim: {fileID: 7400000, guid: 7f2e356d82e3bb944bcae2be8334ad6e, type: 2}
   AttackAnim: {fileID: 7400000, guid: f471044b683c601478a0b7abf783acff, type: 2}
   AttackVFX: {fileID: 6371210339565269589, guid: 9d80d51230f430947901726206752c91, type: 3}
   ChargeVFX: {fileID: 7992260585244654165, guid: 9b7e792d47601df4283d90654b322f0f, type: 3}
+  attackSFX: {fileID: 8300000, guid: 9f9537024c687d04fa0f489d54ffc44d, type: 3}

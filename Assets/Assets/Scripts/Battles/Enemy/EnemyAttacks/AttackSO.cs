@@ -7,6 +7,9 @@ public abstract class AttackSO : ScriptableObject
     public int damage = 1;
     public float projectileSpeed = 5f;
 
-    // Every unique attack pattern implements this method with its own math!
+    [Header("Audio")]
+    public AudioClip attackSFX;
+
+    //Causes a unique attack pattern
     public abstract void Execute(Vector3 arenaCenter, Transform playerTransform, HazardSpawner spawner);
 }

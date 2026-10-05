@@ -93,6 +93,7 @@ public class BattleManager : MonoBehaviour
     {
         currentEnemies = enemies;
         state = BattleState.START;
+        AudioManager.Instance?.PlayBattleMusic();
         StartCoroutine(SetupBattleSequence());
     }
 
@@ -181,8 +182,10 @@ public class BattleManager : MonoBehaviour
     {
         if (spawnedSoulObject != null) return;
         if (currentSoul.SoulSprite == null || soulSpawnAnchor == null) return;
+        AudioManager.Instance?.PlaySoulSpawnSFX();
 
         spawnedSoulObject = Instantiate(currentSoul.SoulSprite, soulSpawnAnchor.position, Quaternion.identity, soulSpawnAnchor);
+       
 
         SpriteRenderer sr = spawnedSoulObject.GetComponentInChildren<SpriteRenderer>();
         if (sr != null)
@@ -301,10 +304,13 @@ public class BattleManager : MonoBehaviour
     private IEnumerator ExecuteAttack(AttackDataSO attack, List<int> targetIndices)
     {
         state = BattleState.BUSY;
+        AudioManager.Instance?.PlaySFX(attack.attackSFX);
 
         bool isSoulAttacking = (attack is SoulAttackSO && spawnedSoulObject != null);
         Transform attacker = isSoulAttacking ? spawnedSoulObject.transform : playerMovement.transform;
         Vector3 startPos = attacker.position;
+
+        
 
         GameObject mainTarget = null;
         foreach (int idx in targetIndices)
@@ -406,6 +412,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator StartEnemyTurn()
     {
         state = BattleState.ENEMYTURN;
+        
 
         if (battleUIPanel != null) battleUIPanel.SetActive(false);
         if (playerMovement != null) playerMovement.canMoveInBattle = true;
@@ -414,6 +421,8 @@ public class BattleManager : MonoBehaviour
         {
             EnemySO enemy = currentEnemies[0];
             AttackSO selectedAttack = enemy.attacks[Random.Range(0, enemy.attacks.Count)];
+
+            AudioManager.Instance?.PlaySFX(selectedAttack.attackSFX);
 
             float timer = 0f;
             float nextSpawnTime = 0f;
@@ -456,6 +465,8 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator EndBattleSequence(bool won)
     {
+        AudioManager.Instance?.PlayOverworldMusic();
+
         if (battleUIPanel != null)
         {
             battleUIPanel.SetActive(false);

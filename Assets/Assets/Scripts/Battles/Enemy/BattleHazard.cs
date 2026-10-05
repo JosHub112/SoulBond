@@ -15,6 +15,8 @@ public class BattleHazard : MonoBehaviour
         moveSpeed = speed;
         isInitialized = true;
 
+        AudioManager.Instance?.PlayHazardSpawnSFX();
+
         // Auto-destroy after 6 seconds to prevent memory leaks
         Destroy(gameObject, 6f);
     }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySO
   enemyName: Gorgal
   enemyPrefab: {fileID: 1693971611916701001, guid: 0d2e1b0e4c6dc2e49b9a9edcbd323f15, type: 3}
-  maxHealth: 20
+  maxHealth: 40
   attacks:
   - {fileID: 11400000, guid: ba279138bf79cdf499e177b56855f87f, type: 2}
   - {fileID: 11400000, guid: 94f39f4161b5df84cae15963e50dd8a8, type: 2}

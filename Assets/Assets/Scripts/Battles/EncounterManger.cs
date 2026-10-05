@@ -3,14 +3,16 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-
+/// <summary>
 /// Rolls a random encounter chance whenever the player steps onto a tile
 /// that exists on the assigned "ground" Tilemap.
-
+/// </summary>
 public class EncounterManager : MonoBehaviour
 {
-    public static EncounterManager Instance {  get; private set; }
-    [Range(0f, 100f)] public float encounterChancePercent = 10f;
+    public static EncounterManager Instance { get; private set; }
+
+    [Range(0f, 100f)]
+    public float encounterChancePercent = 10f;
 
     public Transform battlePlayerSpawnPoint;
 
@@ -21,9 +23,8 @@ public class EncounterManager : MonoBehaviour
 
     private void Awake()
     {
-
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);       
+        else Destroy(gameObject);
     }
 
     public void CheckForEncounters(Transform playerTransform)
@@ -45,9 +46,17 @@ public class EncounterManager : MonoBehaviour
 
         if (BattleManager.Instance != null && possibleEnemies.Count > 0)
         {
-            // Pick a random index safely from the entire list size
-            int randomIndex = UnityEngine.Random.Range(0, possibleEnemies.Count);
-            List<EnemySO> encounterList = new List<EnemySO>() { possibleEnemies[randomIndex] };
+            List<EnemySO> encounterList = new List<EnemySO>();
+
+            // Roll a random enemy count from 1 to 4
+            int enemyCountToSpawn = Random.Range(1, 5); // Upper bound is exclusive, so max value is 4
+
+            for (int i = 0; i < enemyCountToSpawn; i++)
+            {
+                int randomIndex = Random.Range(0, possibleEnemies.Count);
+                encounterList.Add(possibleEnemies[randomIndex]);
+            }
+
             BattleManager.Instance.StartBattle(encounterList);
         }
     }
