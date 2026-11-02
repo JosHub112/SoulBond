@@ -12,9 +12,13 @@
 ### Attack Pipeline
 <img width="1425" alt="Attack pipeline visual sheet" src="https://github.com/user-attachments/assets/ad76bcf5-be90-42c2-8541-21703f858fc8" />
 
+Code: [Here](https://github.com/JosHub112/SoulBond/blob/main/Assets/Assets/Scripts/Battles/HazardSpawner.cs)
+
 ### Random Encounter Flow
 <img width="1428" alt="Random encounter flow diagram" src="https://github.com/user-attachments/assets/ae8c0295-b19d-4d88-8a10-c169393c8485" />
 
+---
+Code: [Here](https://github.com/JosHub112/SoulBond/blob/main/Assets/Assets/Scripts/Battles/EncounterManger.cs)
 ---
 
 ## Sprites
@@ -33,3 +37,12 @@
 
 ### Level 1
 <img width="575" alt="Level 1 map" src="https://github.com/user-attachments/assets/ebdc3ad4-a3b9-47ab-bb87-b47702d3e792" />
+
+
+### ShowReel
+
+---
+
+<img width="800" height="448" alt="SoulBondClip-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/8d253ceb-ab9a-4f0a-8627-831442b19f76" />
+
+
