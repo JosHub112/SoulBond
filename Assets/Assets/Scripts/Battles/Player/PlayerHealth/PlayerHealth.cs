@@ -16,8 +16,6 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float iFrameDuration = 1f;
     private bool isInvincible = false;
 
-    [SerializeField] private ObjectAnimations Shake;
-
 
     private void Start()
     {
@@ -30,13 +28,7 @@ public class PlayerHealth : MonoBehaviour
         if (isInvincible || currentHealth <= 0) return;
 
         AudioManager.Instance?.PlayHitSFX();
-        Debug.Log($"Hit! Shake reference is null? {Shake == null}");
 
-        if (Shake != null)
-        {
-            Shake.TriggerShake(0.3f, 0.3f); 
-            Shake.TriggerBounce(0.3f, 1.2f);
-        }
 
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);

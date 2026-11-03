@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7400e7426b80d9344b5968a8afa8f8bd, type: 3}
   m_Name: Barrage
   m_EditorClassIdentifier: Assembly-CSharp::SoulAttackSO
-  damage: 13
+  damage: 20
   Enemycount: 0
   ChargeAnim: {fileID: 7400000, guid: e113751b57b43694992a87aeffaee50d, type: 2}
   AttackAnim: {fileID: 7400000, guid: f471044b683c601478a0b7abf783acff, type: 2}

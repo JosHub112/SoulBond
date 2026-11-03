@@ -1,5 +1,5 @@
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -21,9 +21,23 @@ public class EncounterManager : MonoBehaviour
 
     [SerializeField] private List<EnemySO> possibleEnemies = new List<EnemySO>();
 
+    [Header("Transition")]
+    [SerializeField] private CanvasGroup transitionPanel; // black panel with a CanvasGroup
+    [SerializeField] private float fadeDuration = 0.5f;
+
     private void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+
+            // Start fully transparent and let clicks pass through
+            if (transitionPanel != null)
+            {
+                transitionPanel.alpha = 0f;
+                transitionPanel.blocksRaycasts = false;
+            }
+        }
         else Destroy(gameObject);
     }
 
@@ -39,8 +53,16 @@ public class EncounterManager : MonoBehaviour
 
     public void TriggerBattle(Transform playerTransform)
     {
+        if (inBattle) return;
+        StartCoroutine(TriggerBattleRoutine(playerTransform));
+    }
+
+    private IEnumerator TriggerBattleRoutine(Transform playerTransform)
+    {
         inBattle = true;
         savedOverworldPosition = playerTransform.position;
+
+        yield return Fade(0f, 1f); // to black
 
         playerTransform.position = battlePlayerSpawnPoint.position;
 
@@ -59,13 +81,43 @@ public class EncounterManager : MonoBehaviour
 
             BattleManager.Instance.StartBattle(encounterList);
         }
+
+        yield return Fade(1f, 0f); // back to game
     }
 
     public void EndBattle(Transform playerTransform)
     {
-        playerTransform.position = savedOverworldPosition;
-        inBattle = false;
+        StartCoroutine(EndBattleRoutine(playerTransform));
+    }
 
+    private IEnumerator EndBattleRoutine(Transform playerTransform)
+    {
+        yield return Fade(0f, 1f); // to black
+
+        playerTransform.position = savedOverworldPosition;
+
+        yield return Fade(1f, 0f); // back to game
+
+        inBattle = false;
         Debug.Log("BattleEnded");
+    }
+
+    private IEnumerator Fade(float from, float to)
+    {
+        if (transitionPanel == null) yield break;
+
+        // Block clicks on UI underneath while fading
+        transitionPanel.blocksRaycasts = true;
+
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            transitionPanel.alpha = Mathf.Lerp(from, to, elapsed / fadeDuration);
+            yield return null;
+        }
+
+        transitionPanel.alpha = to;
+        transitionPanel.blocksRaycasts = to >= 1f;
     }
 }
