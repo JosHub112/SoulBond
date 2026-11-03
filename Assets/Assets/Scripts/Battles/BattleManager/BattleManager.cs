@@ -185,7 +185,7 @@ public class BattleManager : MonoBehaviour
         AudioManager.Instance?.PlaySoulSpawnSFX();
 
         spawnedSoulObject = Instantiate(currentSoul.SoulSprite, soulSpawnAnchor.position, Quaternion.identity, soulSpawnAnchor);
-       
+
 
         SpriteRenderer sr = spawnedSoulObject.GetComponentInChildren<SpriteRenderer>();
         if (sr != null)
@@ -310,7 +310,7 @@ public class BattleManager : MonoBehaviour
         Transform attacker = isSoulAttacking ? spawnedSoulObject.transform : playerMovement.transform;
         Vector3 startPos = attacker.position;
 
-        
+
 
         GameObject mainTarget = null;
         foreach (int idx in targetIndices)
@@ -412,7 +412,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator StartEnemyTurn()
     {
         state = BattleState.ENEMYTURN;
-        
+
 
         if (battleUIPanel != null) battleUIPanel.SetActive(false);
         if (playerMovement != null) playerMovement.canMoveInBattle = true;

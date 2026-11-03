@@ -38,7 +38,7 @@ public class PlayerHealth : MonoBehaviour
             Shake.TriggerBounce(0.3f, 1.2f);
         }
 
-        currentHealth -= damage;
+        currentHealth -= damage;    
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateHeartUI();
@@ -46,7 +46,7 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             // Trigger separate death script
-            PlayerDeath deathScript = GetComponent<PlayerDeath>();
+            Death deathScript = GetComponent<Death>();
             if (deathScript != null)
             {
                 deathScript.TriggerDeath();
@@ -63,6 +63,7 @@ public class PlayerHealth : MonoBehaviour
             StartCoroutine(IFrameRoutine());
         }
     }
+
 
     private IEnumerator IFrameRoutine()
     {

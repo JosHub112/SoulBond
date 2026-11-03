@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3680990916483815832}
-  - component: {fileID: 5707982194004387234}
+  - component: {fileID: 839306664594780124}
+  - component: {fileID: 236436724810429971}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -32,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5707982194004387234
+--- !u!114 &839306664594780124
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,7 +42,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 5802953358176197953}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77d53bfece875cc4d838bd46c66aea0a, type: 3}
+  m_Script: {fileID: 11500000, guid: fb44dfc550b15f14f8ff02f856f008e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HazardSpawner
+--- !u!114 &236436724810429971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5802953358176197953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 904cfabf6ce37bf4983fb4a51a6e988e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleManager
   state: 0
@@ -54,3 +67,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   currentEnemies: []
+  currentAttack: {fileID: 11400000, guid: 470a5c042fcbd0a49bcd1ab7effc7ac9, type: 2}
+  playerVfxAnchor: {fileID: 0}
+  enemyChooserButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  enemyChooserRoot: {fileID: 0}
+  currentSoul: {fileID: 11400000, guid: 640f2b99a7745b74f98f5bbd4d6feabc, type: 2}
+  soulSpawnAnchor: {fileID: 0}
+  soulOptionsRoot: {fileID: 0}
+  soulAttackButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
