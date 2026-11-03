@@ -13,11 +13,16 @@ public class AudioManager : MonoBehaviour
     [Header("Music Tracks (OST)")]
     public AudioClip overworldOST;
     public AudioClip battleOST;
+    public AudioClip DeathOST;
 
     [Header("Global SFX")]
     public AudioClip hitSFX;
     public AudioClip hazardSpawnSFX;
     public AudioClip soulSpawnSFX;
+
+    [Header("UI SFX")]
+    public AudioClip GlitchSFX;
+   
 
     private void Awake()
     {
@@ -59,10 +64,17 @@ public class AudioManager : MonoBehaviour
     }
 
     // --- CONVENIENCE METHODS FOR GLOBAL SOUNDS ---
+
+    //-- OST --
     public void PlayOverworldMusic() => PlayMusic(overworldOST);
     public void PlayBattleMusic() => PlayMusic(battleOST);
+    public void PlayDeathMusic() => PlayMusic(DeathOST);
 
+    //-- SFX --
     public void PlayHitSFX() => PlaySFX(hitSFX);
+    public void PlayGlitchSFX() => PlaySFX(GlitchSFX);
     public void PlayHazardSpawnSFX() => PlaySFX(hazardSpawnSFX);
     public void PlaySoulSpawnSFX() => PlaySFX(soulSpawnSFX);
+
+    
 }

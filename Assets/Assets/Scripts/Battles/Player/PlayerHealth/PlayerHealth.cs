@@ -37,6 +37,13 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+
+           
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayOverworldMusic();
+            }
+
             // Trigger separate death script
             PlayerDeath deathScript = GetComponent<PlayerDeath>();
             if (deathScript != null)
