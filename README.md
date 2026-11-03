@@ -46,11 +46,3 @@ Code: [Here](https://github.com/JosHub112/SoulBond/blob/main/Assets/Assets/Scrip
 <img width="800" height="448" alt="SoulBondClip-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/8d253ceb-ab9a-4f0a-8627-831442b19f76" />
 
 
-## Sounds I made
-
----
-
-[Awakening.mp3](https://github.com/user-attachments/files/34262719/Awakening.mp3)
-[Assets_Assets_Sounds_Lux_DamageTaken.wav](https://github.com/user-attachments/files/34262741/Assets_Assets_Sounds_Lux_DamageTaken.wav)
-[Slash (1) (1).mp3](https://github.com/user-attachments/files/34262739/Slash.1.1.mp3)
-
