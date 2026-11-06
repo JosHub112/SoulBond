@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 
 public enum BattleState
@@ -24,7 +23,7 @@ public class BattleManager : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private GameObject battleUIPanel;
+    [SerializeField] private BattleUI battleUI;
     private HazardSpawner hazardSpawner;
 
     [Header("Positions & Spawning")]
@@ -40,18 +39,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private PlayerAttackSO currentAttack;
     [SerializeField] private Transform playerVfxAnchor;
 
-    [Header("Enemy Chooser UI")]
-    [SerializeField] private Button[] enemyChooserButtons = new Button[4];
-    [SerializeField] private GameObject enemyChooserRoot;
-
     [Header("Soul")]
     [SerializeField] private SoulSO currentSoul;
     [SerializeField] private Transform soulSpawnAnchor;
     private GameObject spawnedSoulObject;
-
-    [Header("Soul Options UI")]
-    [SerializeField] private GameObject soulOptionsRoot;
-    [SerializeField] private Button[] soulAttackButtons = new Button[4];
 
     private AttackDataSO pendingAttack;
 
@@ -65,28 +56,27 @@ public class BattleManager : MonoBehaviour
 
         hazardSpawner = GetComponent<HazardSpawner>();
 
-        for (int i = 0; i < enemyChooserButtons.Length; i++)
+        if (battleUI == null)
         {
-            if (enemyChooserButtons[i] == null) continue;
-
-            int capturedIndex = i;
-            enemyChooserButtons[i].onClick.AddListener(() => OnEnemyTargetSelected(capturedIndex));
+            Debug.LogError("BattleManager is missing a BattleUI reference.", this);
+            return;
         }
 
-        for (int i = 0; i < soulAttackButtons.Length; i++)
-        {
-            if (soulAttackButtons[i] == null) continue;
+        battleUI.EnemyTargetSelected += OnEnemyTargetSelected;
+        battleUI.SoulAttackSelected += OnSoulAttackChosen;
+    }
 
-            int capturedIndex = i;
-            soulAttackButtons[i].onClick.AddListener(() => OnSoulAttackChosen(capturedIndex));
-        }
+    private void OnDestroy()
+    {
+        if (battleUI == null) return;
+
+        battleUI.EnemyTargetSelected -= OnEnemyTargetSelected;
+        battleUI.SoulAttackSelected -= OnSoulAttackChosen;
     }
 
     private void Start()
     {
-        if (battleUIPanel != null) battleUIPanel.SetActive(false);
-        HideEnemyChooser();
-        HideSoulOptions();
+        battleUI.HideAll();
     }
 
     public void StartBattle(List<EnemySO> enemies)
@@ -119,7 +109,7 @@ public class BattleManager : MonoBehaviour
             playerMovement.canMoveInBattle = false;
         }
 
-        if (battleUIPanel != null) battleUIPanel.SetActive(false);
+        battleUI.HideActionMenu();
 
         yield return new WaitForSeconds(1f);
         StartPlayerTurn();
@@ -132,9 +122,9 @@ public class BattleManager : MonoBehaviour
         selectedTargetIndices.Clear();
         pendingAttack = null;
 
-        HideEnemyChooser();
+        battleUI.HideEnemyChooser();
         ClearActiveHazards();
-        HideSoulOptions();
+        battleUI.HideSoulOptions();
         DespawnSoul();
 
         if (playerMovement != null)
@@ -143,7 +133,7 @@ public class BattleManager : MonoBehaviour
             playerMovement.transform.position = initialBattlePosition;
         }
 
-        if (battleUIPanel != null) battleUIPanel.SetActive(true);
+        battleUI.ShowActionMenu();
     }
 
     public void OnAttackButtonClicked()
@@ -174,8 +164,13 @@ public class BattleManager : MonoBehaviour
 
         SummonSoul();
 
-        if (battleUIPanel != null) battleUIPanel.SetActive(false);
-        ShowSoulOptions();
+        battleUI.HideActionMenu();
+        battleUI.ShowSoulOptions(IsSoulAttackAvailable);
+    }
+
+    private bool IsSoulAttackAvailable(int index)
+    {
+        return currentSoul != null && index < currentSoul.attacks.Count && currentSoul.attacks[index] != null;
     }
 
     private void SummonSoul()
@@ -185,7 +180,6 @@ public class BattleManager : MonoBehaviour
         AudioManager.Instance?.PlaySoulSpawnSFX();
 
         spawnedSoulObject = Instantiate(currentSoul.SoulSprite, soulSpawnAnchor.position, Quaternion.identity, soulSpawnAnchor);
-       
 
         SpriteRenderer sr = spawnedSoulObject.GetComponentInChildren<SpriteRenderer>();
         if (sr != null)
@@ -210,31 +204,6 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void ShowSoulOptions()
-    {
-        if (soulOptionsRoot != null) soulOptionsRoot.SetActive(true);
-
-        for (int i = 0; i < soulAttackButtons.Length; i++)
-        {
-            if (soulAttackButtons[i] == null) continue;
-
-            bool attackAvailable = currentSoul != null && i < currentSoul.attacks.Count && currentSoul.attacks[i] != null;
-            soulAttackButtons[i].gameObject.SetActive(attackAvailable);
-            soulAttackButtons[i].interactable = attackAvailable;
-        }
-    }
-
-    private void HideSoulOptions()
-    {
-        if (soulOptionsRoot != null) soulOptionsRoot.SetActive(false);
-
-        for (int i = 0; i < soulAttackButtons.Length; i++)
-        {
-            if (soulAttackButtons[i] == null) continue;
-            soulAttackButtons[i].gameObject.SetActive(false);
-        }
-    }
-
     private void OnSoulAttackChosen(int index)
     {
         if (state != BattleState.PLAYERTURN) return;
@@ -242,7 +211,7 @@ public class BattleManager : MonoBehaviour
 
         SoulAttackSO chosen = currentSoul.attacks[index];
 
-        HideSoulOptions();
+        battleUI.HideSoulOptions();
 
         pendingAttack = chosen;
         BeginTargetSelection();
@@ -253,40 +222,20 @@ public class BattleManager : MonoBehaviour
         choosingTargets = true;
         selectedTargetIndices.Clear();
 
-        if (battleUIPanel != null) battleUIPanel.SetActive(false);
-        ShowEnemyChooser();
+        battleUI.HideActionMenu();
+        battleUI.ShowEnemyChooser(IsEnemyAlive);
     }
 
-    private void ShowEnemyChooser()
+    private bool IsEnemyAlive(int index)
     {
-        if (enemyChooserRoot != null) enemyChooserRoot.SetActive(true);
-
-        for (int i = 0; i < enemyChooserButtons.Length; i++)
-        {
-            if (enemyChooserButtons[i] == null) continue;
-
-            bool enemyAlive = i < spawnedEnemyObjects.Count && spawnedEnemyObjects[i] != null;
-            enemyChooserButtons[i].gameObject.SetActive(enemyAlive);
-            enemyChooserButtons[i].interactable = enemyAlive;
-        }
-    }
-
-    private void HideEnemyChooser()
-    {
-        if (enemyChooserRoot != null) enemyChooserRoot.SetActive(false);
-
-        for (int i = 0; i < enemyChooserButtons.Length; i++)
-        {
-            if (enemyChooserButtons[i] == null) continue;
-            enemyChooserButtons[i].gameObject.SetActive(false);
-        }
+        return index < spawnedEnemyObjects.Count && spawnedEnemyObjects[index] != null;
     }
 
     private void OnEnemyTargetSelected(int index)
     {
         if (!choosingTargets) return;
         if (pendingAttack == null) return;
-        if (index >= spawnedEnemyObjects.Count || spawnedEnemyObjects[index] == null) return;
+        if (!IsEnemyAlive(index)) return;
         if (selectedTargetIndices.Contains(index)) return;
 
         selectedTargetIndices.Add(index);
@@ -296,7 +245,7 @@ public class BattleManager : MonoBehaviour
         if (selectedTargetIndices.Count >= needed)
         {
             choosingTargets = false;
-            HideEnemyChooser();
+            battleUI.HideEnemyChooser();
             StartCoroutine(ExecuteAttack(pendingAttack, new List<int>(selectedTargetIndices)));
         }
     }
@@ -309,8 +258,6 @@ public class BattleManager : MonoBehaviour
         bool isSoulAttacking = (attack is SoulAttackSO && spawnedSoulObject != null);
         Transform attacker = isSoulAttacking ? spawnedSoulObject.transform : playerMovement.transform;
         Vector3 startPos = attacker.position;
-
-        
 
         GameObject mainTarget = null;
         foreach (int idx in targetIndices)
@@ -383,7 +330,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator ExecutePlayerBlock()
     {
         state = BattleState.BUSY;
-        battleUIPanel.SetActive(false);
+        battleUI.HideActionMenu();
 
         playerMovement.transform.DOPunchScale(new Vector3(0.2f, -0.2f, 0f), duration: 0.5f, vibrato: 5);
 
@@ -394,7 +341,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator ExecuteFleeAttempt()
     {
         state = BattleState.BUSY;
-        battleUIPanel.SetActive(false);
+        battleUI.HideActionMenu();
 
         bool success = Random.value > 0.8f;
 
@@ -412,9 +359,8 @@ public class BattleManager : MonoBehaviour
     private IEnumerator StartEnemyTurn()
     {
         state = BattleState.ENEMYTURN;
-        
 
-        if (battleUIPanel != null) battleUIPanel.SetActive(false);
+        battleUI.HideActionMenu();
         if (playerMovement != null) playerMovement.canMoveInBattle = true;
 
         if (currentEnemies.Count > 0 && currentEnemies[0] != null && currentEnemies[0].attacks.Count > 0)
@@ -467,13 +413,7 @@ public class BattleManager : MonoBehaviour
     {
         AudioManager.Instance?.PlayOverworldMusic();
 
-        if (battleUIPanel != null)
-        {
-            battleUIPanel.SetActive(false);
-        }
-
-        HideEnemyChooser();
-        HideSoulOptions();
+        battleUI.HideAll();
         DespawnSoul();
 
         if (won)
@@ -500,7 +440,6 @@ public class BattleManager : MonoBehaviour
         BattleHazard[] hazards = FindObjectsOfType<BattleHazard>();
         foreach (BattleHazard h in hazards)
         {
-
             Destroy(h.gameObject);
         }
     }
