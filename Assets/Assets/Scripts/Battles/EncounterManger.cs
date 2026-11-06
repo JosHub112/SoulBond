@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-/// <summary>
-/// Rolls a random encounter chance whenever the player steps onto a tile
-/// that exists on the assigned "ground" Tilemap.
-/// </summary>
 public class EncounterManager : MonoBehaviour
 {
     public static EncounterManager Instance { get; private set; }
@@ -22,22 +18,11 @@ public class EncounterManager : MonoBehaviour
     [SerializeField] private List<EnemySO> possibleEnemies = new List<EnemySO>();
 
     [Header("Transition")]
-    [SerializeField] private CanvasGroup transitionPanel; // black panel with a CanvasGroup
-    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private BattleUIEffects uiEffects; // owns the black transition panel
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-
-            // Start fully transparent and let clicks pass through
-            if (transitionPanel != null)
-            {
-                transitionPanel.alpha = 0f;
-                transitionPanel.blocksRaycasts = false;
-            }
-        }
+        if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
@@ -62,7 +47,7 @@ public class EncounterManager : MonoBehaviour
         inBattle = true;
         savedOverworldPosition = playerTransform.position;
 
-        yield return Fade(0f, 1f); // to black
+        yield return ScreenToBlack(flash: true); // blink, then black
 
         playerTransform.position = battlePlayerSpawnPoint.position;
 
@@ -82,7 +67,7 @@ public class EncounterManager : MonoBehaviour
             BattleManager.Instance.StartBattle(encounterList);
         }
 
-        yield return Fade(1f, 0f); // back to game
+        yield return ScreenFromBlack(); // back to game
     }
 
     public void EndBattle(Transform playerTransform)
@@ -92,32 +77,23 @@ public class EncounterManager : MonoBehaviour
 
     private IEnumerator EndBattleRoutine(Transform playerTransform)
     {
-        yield return Fade(0f, 1f); // to black
+        yield return ScreenToBlack(flash: false); // choppy fade to black
 
         playerTransform.position = savedOverworldPosition;
 
-        yield return Fade(1f, 0f); // back to game
+        yield return ScreenFromBlack(); // back to game
 
         inBattle = false;
         Debug.Log("BattleEnded");
     }
 
-    private IEnumerator Fade(float from, float to)
+    private IEnumerator ScreenToBlack(bool flash)
     {
-        if (transitionPanel == null) yield break;
+        if (uiEffects != null) yield return uiEffects.FadeToBlack(flash);
+    }
 
-        // Block clicks on UI underneath while fading
-        transitionPanel.blocksRaycasts = true;
-
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            transitionPanel.alpha = Mathf.Lerp(from, to, elapsed / fadeDuration);
-            yield return null;
-        }
-
-        transitionPanel.alpha = to;
-        transitionPanel.blocksRaycasts = to >= 1f;
+    private IEnumerator ScreenFromBlack()
+    {
+        if (uiEffects != null) yield return uiEffects.FadeFromBlack();
     }
 }

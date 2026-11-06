@@ -129,7 +129,7 @@ public class BattleManager : MonoBehaviour
 
         if (playerMovement != null)
         {
-            playerMovement.canMoveInBattle = false;
+            playerMovement.canMoveInBattle = true;
             playerMovement.transform.position = initialBattlePosition;
         }
 
@@ -250,9 +250,19 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when a chosen action starts playing out, so player input
+    /// can't fight with the attack / block / flee animations.
+    /// </summary>
+    private void LockPlayerMovement()
+    {
+        if (playerMovement != null) playerMovement.canMoveInBattle = false;
+    }
+
     private IEnumerator ExecuteAttack(AttackDataSO attack, List<int> targetIndices)
     {
         state = BattleState.BUSY;
+        LockPlayerMovement();
         AudioManager.Instance?.PlaySFX(attack.attackSFX);
 
         bool isSoulAttacking = (attack is SoulAttackSO && spawnedSoulObject != null);
@@ -330,6 +340,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator ExecutePlayerBlock()
     {
         state = BattleState.BUSY;
+        LockPlayerMovement();
         battleUI.HideActionMenu();
 
         playerMovement.transform.DOPunchScale(new Vector3(0.2f, -0.2f, 0f), duration: 0.5f, vibrato: 5);
@@ -341,6 +352,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator ExecuteFleeAttempt()
     {
         state = BattleState.BUSY;
+        LockPlayerMovement();
         battleUI.HideActionMenu();
 
         bool success = Random.value > 0.8f;
@@ -361,7 +373,13 @@ public class BattleManager : MonoBehaviour
         state = BattleState.ENEMYTURN;
 
         battleUI.HideActionMenu();
-        if (playerMovement != null) playerMovement.canMoveInBattle = true;
+
+        if (playerMovement != null)
+        {
+            // The player may have wandered during their turn, so start the dodge from the centre
+            playerMovement.transform.position = initialBattlePosition;
+            playerMovement.canMoveInBattle = true;
+        }
 
         if (currentEnemies.Count > 0 && currentEnemies[0] != null && currentEnemies[0].attacks.Count > 0)
         {
