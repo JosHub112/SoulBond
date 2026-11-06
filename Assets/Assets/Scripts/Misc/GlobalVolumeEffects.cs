@@ -17,25 +17,25 @@ public enum VolumeMood
 public class VolumePreset
 {
     [Header("Bloom")]
-    [Min(0f)] public float bloomIntensity = 0.35f;
-    [Min(0f)] public float bloomThreshold = 0.9f;
-    [Range(0f, 1f)] public float bloomScatter = 0.6f;
+    [Min(0f)] public float bloomIntensity = 0.2f;
+    [Min(0f)] public float bloomThreshold = 0.95f;
+    [Range(0f, 1f)] public float bloomScatter = 0.5f;
     public Color bloomTint = Color.white;
 
     [Header("Vignette")]
-    [Range(0f, 1f)] public float vignetteIntensity = 0.2f;
+    [Range(0f, 1f)] public float vignetteIntensity = 0.3f;
     [Range(0.01f, 1f)] public float vignetteSmoothness = 0.4f;
     public Color vignetteColor = Color.black;
 
     [Header("Lens / Grain")]
     [Range(0f, 1f)] public float chromaticAberration;
     [Range(-1f, 1f)] public float lensDistortion;
-    [Range(0f, 1f)] public float filmGrain;
+    [Range(0f, 1f)] public float filmGrain = 0.05f;
 
     [Header("Color Grade")]
-    public float postExposure;
-    [Range(-100f, 100f)] public float contrast = 8f;
-    [Range(-100f, 100f)] public float saturation = 10f;
+    public float postExposure = -0.2f; // Slightly dimmed for night comfort
+    [Range(-100f, 100f)] public float contrast = 5f;
+    [Range(-100f, 100f)] public float saturation = -5f; // Muted saturation to avoid eye fatigue
     [Range(-180f, 180f)] public float hueShift;
     public Color colorFilter = Color.white;
 
@@ -45,14 +45,14 @@ public class VolumePreset
     [Range(-100f, 100f)] public float splitBalance;
 
     [Header("White Balance")]
-    [Range(-100f, 100f)] public float temperature;
+    [Range(-100f, 100f)] public float temperature = -5f; // Slightly warmer for night viewing
     [Range(-100f, 100f)] public float tint;
 
     [Header("Ambient Motion")]
     [Tooltip("How strongly bloom and vignette pulse on the beat.")]
-    [Min(0f)] public float beatStrength;
+    [Min(0f)] public float beatStrength = 0.3f;
     [Tooltip("How strongly the hue slowly shimmers.")]
-    [Min(0f)] public float shimmer;
+    [Min(0f)] public float shimmer = 0.2f;
 
     /// <summary>Moves every value toward 'to'. t = 1 copies it outright.</summary>
     public void LerpToward(VolumePreset to, float t)
@@ -102,34 +102,34 @@ public class VolumePreset
     {
         return new VolumePreset
         {
-            bloomIntensity = 1.1f,
-            bloomThreshold = 0.75f,
-            bloomScatter = 0.7f,
-            bloomTint = new Color(1f, 0.85f, 1f),
+            bloomIntensity = 0.4f,
+            bloomThreshold = 0.85f,
+            bloomScatter = 0.5f,
+            bloomTint = new Color(0.9f, 0.8f, 0.9f),
 
-            vignetteIntensity = 0.45f,
-            vignetteSmoothness = 0.55f,
-            vignetteColor = new Color(0.12f, 0.02f, 0.2f),
+            vignetteIntensity = 0.35f,
+            vignetteSmoothness = 0.5f,
+            vignetteColor = new Color(0.08f, 0.01f, 0.12f),
 
-            chromaticAberration = 0.12f,
-            lensDistortion = -0.05f,
-            filmGrain = 0.18f,
+            chromaticAberration = 0.04f,
+            lensDistortion = -0.02f,
+            filmGrain = 0.08f,
 
-            postExposure = -0.15f,
-            contrast = 28f,
-            saturation = 28f,
+            postExposure = -0.3f,
+            contrast = 15f,
+            saturation = -10f,
             hueShift = 0f,
-            colorFilter = new Color(0.92f, 0.86f, 1f),
+            colorFilter = new Color(0.9f, 0.85f, 0.95f),
 
-            shadowsTint = new Color(0.35f, 0.25f, 0.65f),
-            highlightsTint = new Color(0.85f, 0.55f, 0.9f),
-            splitBalance = -10f,
+            shadowsTint = new Color(0.25f, 0.18f, 0.45f),
+            highlightsTint = new Color(0.65f, 0.45f, 0.7f),
+            splitBalance = -5f,
 
-            temperature = -12f,
-            tint = 15f,
+            temperature = -10f,
+            tint = 10f,
 
-            beatStrength = 1f,
-            shimmer = 1f,
+            beatStrength = 0.3f,
+            shimmer = 0.3f,
         };
     }
 
@@ -138,34 +138,34 @@ public class VolumePreset
     {
         return new VolumePreset
         {
-            bloomIntensity = 1.5f,
-            bloomThreshold = 0.7f,
-            bloomScatter = 0.75f,
-            bloomTint = new Color(1f, 0.7f, 0.85f),
+            bloomIntensity = 0.5f,
+            bloomThreshold = 0.8f,
+            bloomScatter = 0.55f,
+            bloomTint = new Color(0.95f, 0.75f, 0.8f),
 
-            vignetteIntensity = 0.58f,
+            vignetteIntensity = 0.45f,
             vignetteSmoothness = 0.5f,
-            vignetteColor = new Color(0.3f, 0.02f, 0.1f),
+            vignetteColor = new Color(0.18f, 0.01f, 0.05f),
 
-            chromaticAberration = 0.25f,
-            lensDistortion = -0.12f,
-            filmGrain = 0.28f,
+            chromaticAberration = 0.08f,
+            lensDistortion = -0.05f,
+            filmGrain = 0.12f,
 
-            postExposure = -0.25f,
-            contrast = 38f,
-            saturation = 40f,
+            postExposure = -0.4f,
+            contrast = 20f,
+            saturation = -15f,
             hueShift = 0f,
-            colorFilter = new Color(1f, 0.88f, 0.95f),
+            colorFilter = new Color(0.95f, 0.85f, 0.9f),
 
-            shadowsTint = new Color(0.55f, 0.2f, 0.45f),
-            highlightsTint = new Color(1f, 0.45f, 0.6f),
-            splitBalance = -20f,
+            shadowsTint = new Color(0.35f, 0.15f, 0.3f),
+            highlightsTint = new Color(0.8f, 0.35f, 0.45f),
+            splitBalance = -10f,
 
-            temperature = 5f,
-            tint = 25f,
+            temperature = -5f,
+            tint = 15f,
 
-            beatStrength = 1.6f,
-            shimmer = 1.5f,
+            beatStrength = 0.4f,
+            shimmer = 0.4f,
         };
     }
 
@@ -174,49 +174,40 @@ public class VolumePreset
     {
         return new VolumePreset
         {
-            bloomIntensity = 2.2f,
-            bloomThreshold = 0.6f,
-            bloomScatter = 0.8f,
-            bloomTint = new Color(1f, 0.95f, 0.7f),
+            bloomIntensity = 0.8f,
+            bloomThreshold = 0.75f,
+            bloomScatter = 0.6f,
+            bloomTint = new Color(1f, 0.95f, 0.8f),
 
-            vignetteIntensity = 0.15f,
+            vignetteIntensity = 0.2f,
             vignetteSmoothness = 0.4f,
             vignetteColor = Color.black,
 
-            chromaticAberration = 0.05f,
-            lensDistortion = 0.05f,
-            filmGrain = 0.05f,
+            chromaticAberration = 0.02f,
+            lensDistortion = 0.02f,
+            filmGrain = 0.03f,
 
-            postExposure = 0.5f,
-            contrast = 10f,
-            saturation = 35f,
+            postExposure = -0.1f, // Kept controlled instead of painfully bright (+0.5)
+            contrast = 8f,
+            saturation = 5f,
             hueShift = 0f,
-            colorFilter = new Color(1f, 0.97f, 0.88f),
+            colorFilter = new Color(1f, 0.98f, 0.92f),
 
             shadowsTint = Color.gray,
-            highlightsTint = new Color(1f, 0.85f, 0.4f),
-            splitBalance = 20f,
+            highlightsTint = new Color(0.9f, 0.8f, 0.5f),
+            splitBalance = 10f,
 
-            temperature = 15f,
-            tint = -5f,
+            temperature = 5f,
+            tint = -2f,
 
-            beatStrength = 0.5f,
-            shimmer = 0.5f,
+            beatStrength = 0.2f,
+            shimmer = 0.2f,
         };
     }
 }
 
 /// <summary>
 /// Deltarune-style post-processing for the whole game. Add it to your Global Volume (URP).
-///
-/// Two layers are combined every frame:
-///  1. A MOOD: a base look (Overworld / Battle / EnemyTurn / Victory) the screen blends toward,
-///     with a beat pulse, a slow hue shimmer and a low-health heartbeat on top.
-///  2. IMPULSES: short bursts (hit, impact, pulse, block, glitch, flash, drain, warp)
-///     that spike and then fade away. They can overlap freely.
-///
-/// Call it from anywhere with GlobalVolumeEffects.Instance?.PlayHit(), etc.
-/// Missing overrides are added to a runtime copy of the profile, so the asset on disk isn't modified.
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Volume))]
@@ -231,13 +222,11 @@ public class GlobalVolumeEffects : MonoBehaviour
     [SerializeField] private VolumePreset victory = VolumePreset.DefaultVictory();
 
     [Header("Mood Blending")]
-    [Tooltip("How fast the screen blends between moods. Higher = faster.")]
     [SerializeField] private float moodBlendSpeed = 3f;
 
     [Header("Beat Pulse")]
-    [Tooltip("Free-running, not synced to the audio. Match it to your battle music.")]
     [SerializeField] private float beatsPerMinute = 120f;
-    [SerializeField] private float beatBloom = 0.35f;
+    [SerializeField] private float beatBloom = 0.1f; // Subdued beat flashing
 
     [Header("Low Health Heartbeat")]
     [SerializeField] private float heartbeatRate = 1.4f;
@@ -252,13 +241,12 @@ public class GlobalVolumeEffects : MonoBehaviour
     [SerializeField] private float drainDecay = 1.2f;
     [SerializeField] private float warpDecay = 1.5f;
 
-    [Header("Impulse Colours")]
-    [SerializeField] private Color hitColor = new Color(1f, 0.1f, 0.15f);
-    [SerializeField] private Color blockColor = new Color(0.3f, 0.9f, 1f);
-    [SerializeField] private Color pulseColor = new Color(1f, 0.4f, 0.9f);
+    [Header("Impulse Colours (Softened)")]
+    [SerializeField] private Color hitColor = new Color(0.7f, 0.15f, 0.18f);
+    [SerializeField] private Color blockColor = new Color(0.2f, 0.6f, 0.7f);
+    [SerializeField] private Color pulseColor = new Color(0.7f, 0.3f, 0.6f);
 
     [Header("Glitch")]
-    [Tooltip("How many times per second the glitch jumps to a new random value.")]
     [SerializeField] private float glitchFps = 24f;
 
     // Volume overrides we drive
@@ -276,7 +264,7 @@ public class GlobalVolumeEffects : MonoBehaviour
     private VolumePreset current;
     private VolumePreset target;
 
-    // Impulses (0..1, fade on their own)
+    // Impulses
     private float hit;
     private float impact;
     private float pulse;
@@ -316,7 +304,6 @@ public class GlobalVolumeEffects : MonoBehaviour
             volume.sharedProfile = ScriptableObject.CreateInstance<VolumeProfile>();
         }
 
-        // volume.profile is a runtime copy, so the asset on disk stays untouched
         VolumeProfile profile = volume.profile;
 
         bloom = Prepare<Bloom>(profile);
@@ -348,14 +335,6 @@ public class GlobalVolumeEffects : MonoBehaviour
         ApplyToVolume();
     }
 
-    // ---------------------------------------------------------------------
-    // Public API: moods
-    // ---------------------------------------------------------------------
-
-    /// <summary>
-    /// Blends the screen toward a mood.
-    /// instant = true snaps straight to it and clears all bursts. Use it while the screen is black.
-    /// </summary>
     public void SetMood(VolumeMood mood, bool instant = false)
     {
         target = PresetFor(mood);
@@ -366,102 +345,81 @@ public class GlobalVolumeEffects : MonoBehaviour
         ClearImpulses();
     }
 
-    // ---------------------------------------------------------------------
-    // Public API: bursts
-    // ---------------------------------------------------------------------
-
-    /// <summary>The player took damage: red flash, aberration, inward lens punch.</summary>
     public void PlayHit(float strength = 1f)
     {
-        hit = Mathf.Max(hit, strength);
-        flash = Mathf.Max(flash, 0.5f * strength);
-        glitch = Mathf.Max(glitch, 0.3f * strength);
+        hit = Mathf.Max(hit, strength * 0.7f);
+        flash = Mathf.Max(flash, 0.2f * strength);
+        glitch = Mathf.Max(glitch, 0.15f * strength);
     }
 
-    /// <summary>A strike lands: white bloom flash, outward lens punch.</summary>
     public void PlayImpact(float strength = 1f)
     {
-        impact = Mathf.Max(impact, strength);
-        flash = Mathf.Max(flash, 0.25f * strength);
+        impact = Mathf.Max(impact, strength * 0.7f);
+        flash = Mathf.Max(flash, 0.15f * strength);
     }
 
-    /// <summary>Soft magenta glow with a small hue kick. Good for menus and charging.</summary>
     public void PlayPulse(float strength = 1f)
     {
-        pulse = Mathf.Max(pulse, strength);
+        pulse = Mathf.Max(pulse, strength * 0.8f);
     }
 
-    /// <summary>The soul appears.</summary>
     public void PlaySoulSummon()
     {
-        pulse = 1f;
-        flash = Mathf.Max(flash, 0.2f);
-        glitch = Mathf.Max(glitch, 0.2f);
+        pulse = 0.8f;
+        flash = Mathf.Max(flash, 0.1f);
+        glitch = Mathf.Max(glitch, 0.1f);
     }
 
-    /// <summary>Cool cyan tint, vignette tightens.</summary>
     public void PlayBlock()
     {
         block = 1f;
-        pulse = Mathf.Max(pulse, 0.4f);
+        pulse = Mathf.Max(pulse, 0.3f);
     }
 
-    /// <summary>Stepped aberration, lens and hue jumps. Spamton-style.</summary>
     public void PlayGlitch(float strength = 1f)
     {
-        glitch = Mathf.Max(glitch, strength);
+        glitch = Mathf.Max(glitch, strength * 0.6f);
     }
 
-    /// <summary>A quick white flash.</summary>
     public void PlayFlash(float strength = 1f)
     {
-        flash = Mathf.Max(flash, strength);
+        flash = Mathf.Max(flash, strength * 0.5f); // Half intensity flash to protect eyes
     }
 
-    /// <summary>Battle intro: starts dark and warped, then snaps into focus with a flash.</summary>
     public void PlayBattleStart()
     {
-        warp = 1f;
-        flash = Mathf.Max(flash, 0.6f);
-        glitch = Mathf.Max(glitch, 0.4f);
-        pulse = 1f;
+        warp = 0.6f;
+        flash = Mathf.Max(flash, 0.3f);
+        glitch = Mathf.Max(glitch, 0.2f);
+        pulse = 0.8f;
     }
 
-    /// <summary>Bright, warm glow.</summary>
     public void PlayVictory()
     {
         SetMood(VolumeMood.Victory);
-        flash = 1f;
-        pulse = 1f;
+        flash = 0.5f;
+        pulse = 0.8f;
     }
 
-    /// <summary>Colour drains out with a quick warp.</summary>
     public void PlayFlee()
     {
         drain = 1f;
-        warp = Mathf.Max(warp, 0.5f);
+        warp = Mathf.Max(warp, 0.3f);
     }
 
-    /// <summary>Red, desaturated, glitching. Stays until ResetEffects().</summary>
     public void PlayDeath()
     {
         dead = true;
-        hit = 1f;
-        glitch = 1f;
-        flash = 0.8f;
+        hit = 0.8f;
+        glitch = 0.6f;
+        flash = 0.4f;
     }
 
-    // ---------------------------------------------------------------------
-    // Public API: sustained
-    // ---------------------------------------------------------------------
-
-    /// <summary>0 = fine, 1 = about to die. Drives the red heartbeat vignette.</summary>
     public void SetDanger(float amount)
     {
         dangerTarget = Mathf.Clamp01(amount);
     }
 
-    /// <summary>Clears death, danger and all bursts, and snaps back to the overworld look.</summary>
     public void ResetEffects()
     {
         dead = false;
@@ -470,10 +428,6 @@ public class GlobalVolumeEffects : MonoBehaviour
         dangerTarget = 0f;
         SetMood(VolumeMood.Overworld, true);
     }
-
-    // ---------------------------------------------------------------------
-    // Update
-    // ---------------------------------------------------------------------
 
     private void UpdateState(float dt)
     {
@@ -491,13 +445,12 @@ public class GlobalVolumeEffects : MonoBehaviour
         danger = Mathf.MoveTowards(danger, dangerTarget, dt * 1.5f);
         deathAmount = Mathf.MoveTowards(deathAmount, dead ? 1f : 0f, dt * 0.8f);
 
-        // The glitch jumps in steps instead of changing smoothly every frame
         if (glitch > 0f && Time.unscaledTime >= nextGlitchStep)
         {
             nextGlitchStep = Time.unscaledTime + 1f / Mathf.Max(1f, glitchFps);
-            noiseAberration = Random.value;
-            noiseLens = Random.Range(-1f, 1f);
-            noiseHue = Random.Range(-1f, 1f);
+            noiseAberration = Random.value * 0.5f; // Muted glitch severity
+            noiseLens = Random.Range(-0.5f, 0.5f);
+            noiseHue = Random.Range(-0.5f, 0.5f);
         }
     }
 
@@ -510,102 +463,97 @@ public class GlobalVolumeEffects : MonoBehaviour
         float heart = danger > 0.001f ? HeartbeatEnvelope((time * heartbeatRate) % 1f) * danger : 0f;
         float shimmerWave = Mathf.Sin(time * 0.7f) * b.shimmer;
 
-        // How "red" the screen is from damage, low health or death
-        float red = Mathf.Clamp01(hit + heart * 0.8f + deathAmount);
+        float red = Mathf.Clamp01(hit + heart * 0.6f + deathAmount);
 
-        // Bloom
-        bloom.intensity.value = b.bloomIntensity + beat * beatBloom + impact * 2f + pulse * 1.5f + flash * 3f + warp * 0.5f;
+        // Bloom (softened multipliers)
+        bloom.intensity.value = b.bloomIntensity + beat * beatBloom + impact * 0.6f + pulse * 0.5f + flash * 0.8f + warp * 0.2f;
         bloom.threshold.value = b.bloomThreshold;
         bloom.scatter.value = b.bloomScatter;
 
-        Color bloomTint = Color.Lerp(b.bloomTint, pulseColor, pulse * 0.6f);
-        bloomTint = Color.Lerp(bloomTint, blockColor, block);
-        bloomTint = Color.Lerp(bloomTint, Color.white, Mathf.Clamp01(impact + flash));
+        Color bloomTint = Color.Lerp(b.bloomTint, pulseColor, pulse * 0.4f);
+        bloomTint = Color.Lerp(bloomTint, blockColor, block * 0.8f);
+        bloomTint = Color.Lerp(bloomTint, Color.white, Mathf.Clamp01(impact + flash) * 0.5f);
         bloom.tint.value = bloomTint;
 
         // Vignette
         vignette.intensity.value = b.vignetteIntensity
-            + beat * 0.04f
-            + hit * 0.3f
-            + heart * 0.35f
-            + deathAmount * 0.45f
-            + block * 0.12f
-            + warp * 0.5f;
+            + beat * 0.02f
+            + hit * 0.2f
+            + heart * 0.25f
+            + deathAmount * 0.35f
+            + block * 0.08f
+            + warp * 0.3f;
         vignette.smoothness.value = b.vignetteSmoothness;
 
         Color vignetteColor = Color.Lerp(b.vignetteColor, hitColor, red);
-        vignetteColor = Color.Lerp(vignetteColor, blockColor, block * 0.6f);
+        vignetteColor = Color.Lerp(vignetteColor, blockColor, block * 0.4f);
         vignette.color.value = vignetteColor;
 
-        // Chromatic aberration
-        chromatic.intensity.value = b.chromaticAberration
-            + hit * 0.8f
-            + impact * 0.5f
-            + pulse * 0.25f
-            + heart * 0.2f
-            + deathAmount * 0.5f
-            + warp * 0.7f
-            + glitch * noiseAberration;
-
-        // Lens distortion: hit punches in, impact bulges out, warp squeezes in
-        lens.intensity.value = b.lensDistortion
-            - hit * 0.35f
-            + impact * 0.25f
+        // Chromatic aberration (dampened to avoid aggressive eye-straining pixel separation)
+        chromatic.intensity.value = (b.chromaticAberration
+            + hit * 0.3f
+            + impact * 0.2f
             + pulse * 0.1f
-            - warp * 0.6f
-            - deathAmount * 0.25f
-            + glitch * noiseLens * 0.4f;
+            + heart * 0.1f
+            + deathAmount * 0.25f
+            + warp * 0.3f
+            + glitch * noiseAberration) * 0.6f;
+
+        // Lens distortion
+        lens.intensity.value = b.lensDistortion
+            - hit * 0.15f
+            + impact * 0.1f
+            + pulse * 0.05f
+            - warp * 0.3f
+            - deathAmount * 0.15f
+            + glitch * noiseLens * 0.2f;
 
         // Film grain
         grain.intensity.value = b.filmGrain
-            + glitch * 0.5f
-            + heart * 0.2f
-            + deathAmount * 0.3f;
+            + glitch * 0.2f
+            + heart * 0.1f
+            + deathAmount * 0.2f;
 
-        // Color adjustments
-        colorAdjust.postExposure.value = b.postExposure
-            + beat * 0.08f
-            + flash * 2.5f
-            + impact * 0.7f
-            + hit * 0.5f
-            - deathAmount * 0.9f
-            - warp * 1.5f;
+        // Color adjustments (exposures and contrasts clamped to prevent whiteouts)
+        colorAdjust.postExposure.value = Mathf.Clamp(b.postExposure
+            + beat * 0.03f
+            + flash * 0.5f
+            + impact * 0.2f
+            + hit * 0.1f
+            - deathAmount * 0.5f
+            - warp * 0.5f, -1.5f, 0.5f);
 
         colorAdjust.contrast.value = b.contrast
-            + impact * 20f
-            + hit * 15f
-            + heart * 10f
-            + deathAmount * 30f;
+            + impact * 8f
+            + hit * 6f
+            + heart * 5f
+            + deathAmount * 15f;
 
         colorAdjust.saturation.value = b.saturation
-            + pulse * 25f
-            - hit * 25f
-            - drain * 70f
-            - deathAmount * 100f;
+            + pulse * 10f
+            - hit * 10f
+            - drain * 40f
+            - deathAmount * 60f;
 
         colorAdjust.hueShift.value = b.hueShift
-            + shimmerWave * 8f
-            + pulse * 20f
-            + glitch * noiseHue * 60f;
+            + shimmerWave * 4f
+            + pulse * 10f
+            + glitch * noiseHue * 20f;
 
-        Color filter = Color.Lerp(b.colorFilter, hitColor, hit * 0.7f);
-        filter = Color.Lerp(filter, blockColor, block * 0.5f);
-        filter = Color.Lerp(filter, Color.white, Mathf.Clamp01(flash));
+        Color filter = Color.Lerp(b.colorFilter, hitColor, hit * 0.4f);
+        filter = Color.Lerp(filter, blockColor, block * 0.3f);
+        filter = Color.Lerp(filter, Color.white, Mathf.Clamp01(flash) * 0.5f);
         colorAdjust.colorFilter.value = filter;
 
         // Split toning
-        splitToning.shadows.value = Color.Lerp(b.shadowsTint, hitColor, red * 0.5f);
-        splitToning.highlights.value = Color.Lerp(b.highlightsTint, pulseColor, pulse * 0.5f);
+        splitToning.shadows.value = Color.Lerp(b.shadowsTint, hitColor, red * 0.3f);
+        splitToning.highlights.value = Color.Lerp(b.highlightsTint, pulseColor, pulse * 0.3f);
         splitToning.balance.value = b.splitBalance;
 
-        // White balance: block cools the screen, hit warms it
-        whiteBalance.temperature.value = b.temperature - block * 30f + hit * 20f;
-        whiteBalance.tint.value = b.tint + pulse * 20f + glitch * noiseHue * 30f;
+        // White balance
+        whiteBalance.temperature.value = b.temperature - block * 15f + hit * 10f;
+        whiteBalance.tint.value = b.tint + pulse * 10f + glitch * noiseHue * 15f;
     }
-
-    // ---------------------------------------------------------------------
-    // Helpers
-    // ---------------------------------------------------------------------
 
     private VolumePreset PresetFor(VolumeMood mood)
     {
@@ -636,14 +584,12 @@ public class GlobalVolumeEffects : MonoBehaviour
         return value * Mathf.Exp(-rate * dt);
     }
 
-    /// <summary>Sharp spike on every beat that eases out.</summary>
     private float BeatEnvelope(float time)
     {
         float phase = (time * beatsPerMinute / 60f) % 1f;
         return Mathf.Pow(1f - phase, 3f);
     }
 
-    /// <summary>Two quick thumps ("lub-dub") followed by a rest.</summary>
     private static float HeartbeatEnvelope(float phase)
     {
         float lub = Mathf.Clamp01(1f - Mathf.Abs(phase - 0.05f) / 0.08f);
@@ -651,7 +597,6 @@ public class GlobalVolumeEffects : MonoBehaviour
         return Mathf.Max(lub, dub);
     }
 
-    /// <summary>Finds the override on the profile, adds it if missing, and switches every parameter on.</summary>
     private static T Prepare<T>(VolumeProfile profile) where T : VolumeComponent, new()
     {
         if (!profile.TryGet(out T component))
@@ -668,10 +613,6 @@ public class GlobalVolumeEffects : MonoBehaviour
 
         return component;
     }
-
-    // ---------------------------------------------------------------------
-    // Editor testing: right-click the component header while in Play mode
-    // ---------------------------------------------------------------------
 
     [ContextMenu("Test/Hit")] private void TestHit() => PlayHit();
     [ContextMenu("Test/Impact")] private void TestImpact() => PlayImpact();

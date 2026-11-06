@@ -29,6 +29,8 @@ public class PlayerHealth : MonoBehaviour
 
         AudioManager.Instance?.PlayHitSFX();
 
+        // Red flash, aberration and lens punch. Bigger hits hit harder.
+        GlobalVolumeEffects.Instance?.PlayHit(Mathf.Clamp01(0.6f + 0.2f * damage));
 
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -37,8 +39,8 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            GlobalVolumeEffects.Instance?.PlayDeath();
 
-           
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayOverworldMusic();
@@ -85,6 +87,8 @@ public class PlayerHealth : MonoBehaviour
 
     public void UpdateHeartUI()
     {
+        UpdateDangerEffect();
+
         if (heartsContainer == null) return;
 
         for (int i = 0; i < heartsContainer.childCount; i++)
@@ -105,5 +109,17 @@ public class PlayerHealth : MonoBehaviour
                 heartSprite.sprite = (i < currentHealth) ? fullHeartSprite : emptyHeartSprite;
             }
         }
+    }
+
+    /// <summary>
+    /// Low health makes the screen throb red like a heartbeat.
+    /// Starts at half health and maxes out at 20%. Runs whenever the hearts refresh, so healing clears it too.
+    /// </summary>
+    private void UpdateDangerEffect()
+    {
+        if (GlobalVolumeEffects.Instance == null) return;
+
+        float ratio = maxHealth > 0 ? (float)currentHealth / maxHealth : 0f;
+        GlobalVolumeEffects.Instance.SetDanger(Mathf.InverseLerp(0.5f, 0.2f, ratio));
     }
 }

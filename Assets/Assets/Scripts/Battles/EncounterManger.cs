@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Rolls a random encounter chance whenever the player steps onto a tile
+/// that exists on the assigned "ground" Tilemap.
+/// </summary>
 public class EncounterManager : MonoBehaviour
 {
     public static EncounterManager Instance { get; private set; }
@@ -49,6 +53,9 @@ public class EncounterManager : MonoBehaviour
 
         yield return ScreenToBlack(flash: true); // blink, then black
 
+        // Hidden behind the black screen, so a hard cut is fine
+        GlobalVolumeEffects.Instance?.SetMood(VolumeMood.Battle, instant: true);
+
         playerTransform.position = battlePlayerSpawnPoint.position;
 
         if (BattleManager.Instance != null && possibleEnemies.Count > 0)
@@ -67,6 +74,7 @@ public class EncounterManager : MonoBehaviour
             BattleManager.Instance.StartBattle(encounterList);
         }
 
+        GlobalVolumeEffects.Instance?.PlayBattleStart();
         yield return ScreenFromBlack(); // back to game
     }
 
@@ -78,6 +86,9 @@ public class EncounterManager : MonoBehaviour
     private IEnumerator EndBattleRoutine(Transform playerTransform)
     {
         yield return ScreenToBlack(flash: false); // choppy fade to black
+
+        // Hidden behind the black screen, so a hard cut is fine
+        GlobalVolumeEffects.Instance?.SetMood(VolumeMood.Overworld, instant: true);
 
         playerTransform.position = savedOverworldPosition;
 

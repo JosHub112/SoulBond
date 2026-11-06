@@ -84,6 +84,7 @@ public class BattleManager : MonoBehaviour
         currentEnemies = enemies;
         state = BattleState.START;
         AudioManager.Instance?.PlayBattleMusic();
+        GlobalVolumeEffects.Instance?.SetMood(VolumeMood.Battle);
         StartCoroutine(SetupBattleSequence());
     }
 
@@ -133,6 +134,9 @@ public class BattleManager : MonoBehaviour
             playerMovement.transform.position = initialBattlePosition;
         }
 
+        GlobalVolumeEffects.Instance?.SetMood(VolumeMood.Battle);
+        GlobalVolumeEffects.Instance?.PlayPulse(0.5f);
+
         battleUI.ShowActionMenu();
     }
 
@@ -178,6 +182,7 @@ public class BattleManager : MonoBehaviour
         if (spawnedSoulObject != null) return;
         if (currentSoul.SoulSprite == null || soulSpawnAnchor == null) return;
         AudioManager.Instance?.PlaySoulSpawnSFX();
+        GlobalVolumeEffects.Instance?.PlaySoulSummon();
 
         spawnedSoulObject = Instantiate(currentSoul.SoulSprite, soulSpawnAnchor.position, Quaternion.identity, soulSpawnAnchor);
 
@@ -286,10 +291,14 @@ public class BattleManager : MonoBehaviour
                 Instantiate(attack.ChargeVFX, attacker.position, Quaternion.identity);
             }
 
+            GlobalVolumeEffects.Instance?.PlayPulse(isSoulAttacking ? 1f : 0.5f);
+
             yield return new WaitForSeconds(0.3f);
 
             Vector3 attackPos = mainTarget.transform.position + Vector3.left * 1.5f;
             yield return attacker.DOMove(attackPos, 0.15f).SetEase(Ease.InExpo).WaitForCompletion();
+
+            GlobalVolumeEffects.Instance?.PlayImpact(isSoulAttacking ? 1f : 0.7f);
 
             foreach (int idx in targetIndices)
             {
@@ -343,6 +352,7 @@ public class BattleManager : MonoBehaviour
         LockPlayerMovement();
         battleUI.HideActionMenu();
 
+        GlobalVolumeEffects.Instance?.PlayBlock();
         playerMovement.transform.DOPunchScale(new Vector3(0.2f, -0.2f, 0f), duration: 0.5f, vibrato: 5);
 
         yield return new WaitForSeconds(0.6f);
@@ -363,6 +373,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            GlobalVolumeEffects.Instance?.PlayImpact(0.4f);
             yield return playerMovement.transform.DOPunchPosition(Vector3.left * 2f, 0.6f, vibrato: 3).WaitForCompletion();
             StartCoroutine(StartEnemyTurn());
         }
@@ -380,6 +391,9 @@ public class BattleManager : MonoBehaviour
             playerMovement.transform.position = initialBattlePosition;
             playerMovement.canMoveInBattle = true;
         }
+
+        GlobalVolumeEffects.Instance?.SetMood(VolumeMood.EnemyTurn);
+        GlobalVolumeEffects.Instance?.PlayFlash(0.4f);
 
         if (currentEnemies.Count > 0 && currentEnemies[0] != null && currentEnemies[0].attacks.Count > 0)
         {
@@ -437,10 +451,12 @@ public class BattleManager : MonoBehaviour
         if (won)
         {
             state = BattleState.WON;
+            GlobalVolumeEffects.Instance?.PlayVictory();
         }
         else
         {
             state = BattleState.FLED;
+            GlobalVolumeEffects.Instance?.PlayFlee();
         }
 
         yield return new WaitForSeconds(1f);
@@ -474,6 +490,9 @@ public class BattleManager : MonoBehaviour
     public void NotifyEnemyDefeated(GameObject enemyObj)
     {
         int idx = spawnedEnemyObjects.IndexOf(enemyObj);
-        if (idx >= 0) spawnedEnemyObjects[idx] = null;
+        if (idx < 0) return;
+
+        spawnedEnemyObjects[idx] = null;
+        GlobalVolumeEffects.Instance?.PlayGlitch(0.6f);
     }
 }
