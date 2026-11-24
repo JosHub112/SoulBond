@@ -9,9 +9,9 @@ public class TypeWriterEffect : MonoBehaviour
     [SerializeField]private float WritingSpeed = 20f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void Run(string textToType, TMP_Text textLabel)
+    public Coroutine Run(string textToType, TMP_Text textLabel)
     {
-        StartCoroutine(TypeText(textToType, textLabel));
+        return StartCoroutine(TypeText(textToType, textLabel));
     }
 
     private IEnumerator TypeText(string textToType, TMP_Text textLabel)
